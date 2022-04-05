@@ -14,12 +14,8 @@ public class Parser extends DocumentParser {
 
     private ParsedDocument document = null;
 
-    private static final int BODY_SIZE = 1024 * 8;
-
     private final ObjectMapper objectMapper;
     private final JsonParser jsonParser;
-
-    private boolean startedReading = false;
 
     public Parser(Reader in) {
         super(new BufferedReader(in));
@@ -39,19 +35,6 @@ public class Parser extends DocumentParser {
     @Override
     public boolean hasNext() {
         try {
-//            if (!startedReading) {
-//                startedReading = true;
-//                while (jsonParser.nextToken() != JsonToken.FIELD_NAME || !jsonParser.getCurrentName().equals("arguments"))
-//                    ; //empty while body
-//                if (jsonParser.nextToken() != JsonToken.START_ARRAY)
-//                    throw new IllegalArgumentException("should be an array");
-//                jsonParser.nextToken();
-//            } else if (jsonParser.nextToken() == JsonToken.END_ARRAY) {
-//                // end of the documents for this file
-//                jsonParser.close();
-//                in.close();
-//                return false;
-//            }
 
             if (jsonParser.getCurrentName() == null)
                 jsonParser.nextToken();
@@ -72,15 +55,11 @@ public class Parser extends DocumentParser {
             if (root.hasNonNull("id")) id = root.get("id").asText();
             else throw new IllegalArgumentException("No valid id");
 
-            String contents = "";
+            String contents;
             if (root.hasNonNull("contents")) contents = root.get("contents").asText();
             else throw new IllegalArgumentException("No valid contents");
 
-            String chatNoirUrl = "";
-            if (root.hasNonNull("chatNoirUrl")) chatNoirUrl = root.get("chatNoirUrl").asText();
-            else throw new IllegalArgumentException("No valid chatNoirUrl");
-
-            document = new ParsedDocument(id, contents, chatNoirUrl);
+            document = new ParsedDocument(id, contents);
 
             return true;
         } catch (IOException e) {

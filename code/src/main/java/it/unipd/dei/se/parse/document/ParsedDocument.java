@@ -28,10 +28,6 @@ public class ParsedDocument {
      * The contents of the document.
      */
     private final String contents;
-    /**
-     * The chatNoir Url of the document.
-     */
-    private final String chatNoirUrl;
 
     /**
      * Creates a new parsed document
@@ -41,7 +37,7 @@ public class ParsedDocument {
      * @throws NullPointerException  if {@code id} and/or {@code body} are {@code null}.
      * @throws IllegalStateException if {@code id} and/or {@code body} are empty.
      */
-    public ParsedDocument(final String id, final String contents, final String chatNoirUrl) {
+    public ParsedDocument(final String id, final String contents) {
 
         if (id == null) {
             throw new NullPointerException("Document identifier cannot be null.");
@@ -63,17 +59,6 @@ public class ParsedDocument {
         }
 
         this.contents = contents;
-
-
-        if (chatNoirUrl == null) {
-            throw new NullPointerException("Document chatNoirUrl cannot be null.");
-        }
-
-        if (chatNoirUrl.isEmpty()) {
-            throw new IllegalStateException("Document chatNoirUrl cannot be empty.");
-        }
-
-        this.chatNoirUrl = chatNoirUrl;
 
     }
 
