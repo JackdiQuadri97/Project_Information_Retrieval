@@ -28,6 +28,7 @@ import org.apache.lucene.analysis.opennlp.tools.*;
 import org.apache.lucene.analysis.tokenattributes.*;
 
 import java.io.*;
+import java.util.Objects;
 
 /**
  * Helper class to load stop lists and <a href="http://opennlp.apache.org/" target="_blank">Apache OpenNLP</a> models
@@ -147,7 +148,7 @@ public class AnalyzerUtil {
         try {
 
             // Get a reader for the file containing the stop list
-            Reader in = new BufferedReader(new InputStreamReader(CL.getResourceAsStream(stopFile)));
+            Reader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(AnalyzerUtil.class.getClassLoader().getResourceAsStream(stopFile))));
 
             // Read the stop list
             stopList = WordlistLoader.getWordSet(in);
