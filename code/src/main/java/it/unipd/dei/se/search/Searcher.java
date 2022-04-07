@@ -192,6 +192,10 @@ public class Searcher {
                     topics.length);
         }
 
+
+        Map<String, Float> weights = new HashMap<>();
+        weights.put(ParsedDocument.FIELDS.CONTENTS, 1.0f);
+        weights.put(ParsedDocument.FIELDS.DOC_T5_QUERY, 1.0f);
         // (when testing with an index that was not produced by this system,
         // put here the name of the field of the document in which you want to search)
         // Defines in which fields of the documents to search.
@@ -202,7 +206,8 @@ public class Searcher {
                         ParsedDocument.FIELDS.CONTENTS,
                         ParsedDocument.FIELDS.DOC_T5_QUERY
                 },
-                analyzer);
+                analyzer,
+                weights);
 
         if (runID == null) {
             throw new NullPointerException("Run identifier cannot be null.");
@@ -292,9 +297,9 @@ public class Searcher {
 
                 // define the terms to put in the query and if they SHOULD or MUST be present
                 queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getTitle())), BooleanClause.Occur.SHOULD);
-                queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getDescription())),
+                /*queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getDescription())),
                         BooleanClause.Occur.SHOULD);
-                queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getObjects())), BooleanClause.Occur.SHOULD);
+                queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getObjects())), BooleanClause.Occur.SHOULD);*/
 
                 query = queryBuilder.build();
 
