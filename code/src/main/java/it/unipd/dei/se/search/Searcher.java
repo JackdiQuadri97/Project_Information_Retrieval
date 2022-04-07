@@ -81,7 +81,7 @@ public class Searcher {
     /**
      * The query parser
      */
-    private final QueryParser qp;
+    private final QueryParser queryParser;
 
     /**
      * The maximum number of documents to retrieve
@@ -159,7 +159,7 @@ public class Searcher {
 
         try {
             BufferedReader in = Files.newBufferedReader(Paths.get(topicsFile), StandardCharsets.UTF_8);
-
+            // TODO: read topics with XMLTopicParser
             topics = new TrecTopicsReader().readQueries(in);
 
             in.close();
@@ -178,7 +178,9 @@ public class Searcher {
                     topics.length);
         }
 
-        qp = new QueryParser(ParsedDocument.FIELDS.CONTENTS, analyzer);
+        // when testing with an index that was not produced by this system,
+        // put here the name of the field of the document in which you want to search
+        queryParser = new QueryParser(ParsedDocument.FIELDS.CONTENTS, analyzer);
 
         if (runID == null) {
             throw new NullPointerException("Run identifier cannot be null.");
@@ -253,33 +255,38 @@ public class Searcher {
         final Set<String> idField = new HashSet<>();
         idField.add(ParsedDocument.FIELDS.ID);
 
-        BooleanQuery.Builder bq = null;
-        Query q = null;
-        TopDocs docs = null;
-        ScoreDoc[] sd = null;
+        BooleanQuery.Builder queryBuilder = null;
+        Query query = null;
+        TopDocs topDocsObject = null;
+        ScoreDoc[] topDocs = null;
         String docID = null;
 
         try {
-            for (QualityQuery t : topics) {
+            for (QualityQuery topic : topics) {
 
-                System.out.printf("Searching for topic %s.%n", t.getQueryID());
+                System.out.printf("Searching for topic %s.%n", topic.getQueryID());
 
-                bq = new BooleanQuery.Builder();
+                queryBuilder = new BooleanQuery.Builder();
 
-                bq.add(qp.parse(QueryParserBase.escape(t.getValue(TOPIC_FIELDS.TITLE))), BooleanClause.Occur.SHOULD);
-                bq.add(qp.parse(QueryParserBase.escape(t.getValue(TOPIC_FIELDS.DESCRIPTION))),
+                queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getValue(TOPIC_FIELDS.TITLE))), BooleanClause.Occur.SHOULD);
+                queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getValue(TOPIC_FIELDS.DESCRIPTION))),
                         BooleanClause.Occur.SHOULD);
 
-                q = bq.build();
+                query = queryBuilder.build();
+                System.out.println("query: " + query.toString());
 
-                docs = searcher.search(q, maxDocsRetrieved);
+                topDocsObject = searcher.search(query, maxDocsRetrieved);
+                System.out.println("topDocsObject: " + topDocsObject.totalHits.toString());
 
-                sd = docs.scoreDocs;
+                topDocs = topDocsObject.scoreDocs;
 
-                for (int i = 0, n = sd.length; i < n; i++) {
-                    docID = reader.document(sd[i].doc, idField).get(ParsedDocument.FIELDS.ID);
+                System.out.println("topDocs length: " + topDocs.length);
 
-                    run.printf(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", t.getQueryID(), docID, i, sd[i].score,
+                // adding the retrieved documents for this topic to the run file
+                for (int i = 0, n = topDocs.length; i < n; i++) {
+                    docID = reader.document(topDocs[i].doc, idField).get(ParsedDocument.FIELDS.ID);
+
+                    run.printf(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", topic.getQueryID(), docID, i, topDocs[i].score,
                             runID);
                 }
 
@@ -294,7 +301,7 @@ public class Searcher {
 
         elapsedTime = System.currentTimeMillis() - start;
 
-        System.out.printf("%d topic(s) searched in %d seconds.", topics.length, elapsedTime / 1000);
+        System.out.printf("%d topic(s) searched in %d seconds.%n", topics.length, elapsedTime / 1000);
 
         System.out.printf("#### Searching complete ####%n");
     }
@@ -307,13 +314,13 @@ public class Searcher {
      */
     public static void main(String[] args) throws Exception {
 
-        final String topics = "../../collections/TREC_08_1999_AdHoc/topics.txt";
+        final String topics = "experiment/topics_edited.txt";
 
-        final String indexPath = "experiment/index-stop-nostem";
+        final String indexPath = "experiment/index";
 
         final String runPath = "experiment";
 
-        final String runID = "seupd2021-helloTipster-stop-nostem";
+        final String runID = "seupd2122-kueri-stop-nostem";
 
         final int maxDocsRetrieved = 1000;
 
