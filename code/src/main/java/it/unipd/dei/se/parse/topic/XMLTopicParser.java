@@ -13,7 +13,7 @@ public class XMLTopicParser extends TopicParser {
     /**
      * The name of the element containing the topic.
      */
-    private static final String TOPIC_ELEMENT = "Topic";
+    private static final String TOPIC_ELEMENT = "topic";
     /**
      * The name of the element containing the topic number.
      */
@@ -82,9 +82,9 @@ public class XMLTopicParser extends TopicParser {
                 // Description tag is the topic question
                 writer.printf("<desc> description:\n");
                 writer.printf("%s\n\n", t.getDescription());
-                writer.printf("<desc> objects:\n");
+                writer.printf("<obj> objects:\n");
                 writer.printf("%s\n\n", t.getObjects());
-                writer.printf("<desc> narrative:\n");
+                writer.printf("<narr> narrative:\n");
                 writer.printf("%s\n\n", t.getNarrative());
                 writer.printf("</top>\n\n");
             }
