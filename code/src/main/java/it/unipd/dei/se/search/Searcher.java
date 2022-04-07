@@ -15,6 +15,7 @@ import org.apache.lucene.benchmark.quality.QualityQuery;
 import org.apache.lucene.benchmark.quality.trec.TrecTopicsReader;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParserBase;
@@ -195,7 +196,13 @@ public class Searcher {
         // put here the name of the field of the document in which you want to search)
         // Defines in which fields of the documents to search.
         // Use MultiFieldQueryParser to search in multiple fields.
-        queryParser = new QueryParser(ParsedDocument.FIELDS.CONTENTS, analyzer);
+        // queryParser = new QueryParser(ParsedDocument.FIELDS.CONTENTS, analyzer);
+        queryParser = new MultiFieldQueryParser(
+                new String[]{
+                        ParsedDocument.FIELDS.CONTENTS,
+                        ParsedDocument.FIELDS.DOC_T5_QUERY
+                },
+                analyzer);
 
         if (runID == null) {
             throw new NullPointerException("Run identifier cannot be null.");
