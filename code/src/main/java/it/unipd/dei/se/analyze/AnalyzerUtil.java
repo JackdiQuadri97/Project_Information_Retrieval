@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package it.unipd.dei.se.Analysis;
+package it.unipd.dei.se.analyze;
 
 import opennlp.tools.lemmatizer.LemmatizerModel;
 import opennlp.tools.namefind.TokenNameFinderModel;

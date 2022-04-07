@@ -1,16 +1,12 @@
-package it.unipd.dei.se.Analysis;
+package it.unipd.dei.se.analyze;
 
-import static it.unipd.dei.se.Analysis.AnalyzerUtil.consumeTokenStream;
+import org.apache.lucene.analysis.*;
+import org.apache.lucene.analysis.standard.StandardTokenizer;
 
 import java.io.IOException;
 import java.io.Reader;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.LowerCaseFilter;
-import org.apache.lucene.analysis.StopFilter;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.Tokenizer;
-import org.apache.lucene.analysis.standard.StandardTokenizer;
+import static it.unipd.dei.se.analyze.AnalyzerUtil.consumeTokenStream;
 
 public class BaselineAnalyzer extends Analyzer{
     public BaselineAnalyzer() {
