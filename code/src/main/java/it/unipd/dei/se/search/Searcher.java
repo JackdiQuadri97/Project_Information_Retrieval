@@ -171,10 +171,8 @@ public class Searcher {
             XMLTopicParser topicsParser = new XMLTopicParser(in);
             // fill list with parsed topics
             topicsParser.forEachRemaining(tempList::add);
-            System.out.println("templist length: " + tempList.size());
             // convert list to array and assign to attribute topics
             this.topics = tempList.toArray(new ParsedTopic[0]);
-            System.out.println("topics length: " + topics.length);
 
 
             in.close();
@@ -193,8 +191,10 @@ public class Searcher {
                     topics.length);
         }
 
-        // when testing with an index that was not produced by this system,
-        // put here the name of the field of the document in which you want to search
+        // (when testing with an index that was not produced by this system,
+        // put here the name of the field of the document in which you want to search)
+        // Defines in which fields of the documents to search.
+        // Use MultiFieldQueryParser to search in multiple fields.
         queryParser = new QueryParser(ParsedDocument.FIELDS.CONTENTS, analyzer);
 
         if (runID == null) {
@@ -276,28 +276,26 @@ public class Searcher {
         String docID = null;
 
         try {
-            // for (QualityQuery topic : topics) {
+            // SEARCHING
             for (ParsedTopic topic : topics) {
 
                 System.out.printf("Searching for topic %s.%n", topic.getNumber());
 
                 queryBuilder = new BooleanQuery.Builder();
 
+                // define the terms to put in the query and if they SHOULD or MUST be present
                 queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getTitle())), BooleanClause.Occur.SHOULD);
                 queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getDescription())),
                         BooleanClause.Occur.SHOULD);
                 queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getObjects())), BooleanClause.Occur.SHOULD);
 
                 query = queryBuilder.build();
-                System.out.println("query: " + query.toString());
 
                 topDocsObject = searcher.search(query, maxDocsRetrieved);
-                System.out.println("topDocsObject: " + topDocsObject.totalHits.toString());
 
                 topDocs = topDocsObject.scoreDocs;
 
-                System.out.println("topDocs length: " + topDocs.length);
-
+                // OUTPUT
                 // adding the retrieved documents for this topic to the run file
                 for (int i = 0, n = topDocs.length; i < n; i++) {
                     docID = reader.document(topDocs[i].doc, idField).get(ParsedDocument.FIELDS.ID);
@@ -336,17 +334,9 @@ public class Searcher {
 
         final String runPath = "experiment";
 
-        final String runID = "seupd2122-kueri-stop-nostem";
+        final String runID = "seupd2122-kueri";
 
         final int maxDocsRetrieved = 1000;
-
-        // TO TEST THAT THE TOPIC PARSER WORKS
-        /*BufferedReader in = Files.newBufferedReader(Paths.get(topics), StandardCharsets.UTF_8);
-        XMLTopicParser xtp = new XMLTopicParser(in);
-        System.out.println("start");
-        xtp.forEach(x -> System.out.println("topic"));*/
-
-
 
         final Analyzer analyzer = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
                 LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).build();
