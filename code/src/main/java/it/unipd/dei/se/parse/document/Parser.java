@@ -59,7 +59,14 @@ public class Parser extends DocumentParser {
             if (root.hasNonNull("contents")) contents = root.get("contents").asText();
             else throw new IllegalArgumentException("No valid contents");
 
-            document = new ParsedDocument(id, contents);
+            String docT5Query = null;
+            if (contents.contains("<query>")) {
+                String[] contentsSplit = contents.split("<query>");
+                contents = contentsSplit[0].strip();
+                docT5Query = contentsSplit[1].replace("</query>", "").strip();
+            }
+
+            document = new ParsedDocument(id, contents, docT5Query);
 
             return true;
         } catch (IOException e) {
