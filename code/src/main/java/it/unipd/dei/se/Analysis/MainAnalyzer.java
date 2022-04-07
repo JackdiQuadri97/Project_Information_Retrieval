@@ -31,7 +31,7 @@ public class MainAnalyzer extends Analyzer {
 
         tokens = new EnglishPossessiveFilter(tokens);
 
-        tokens = new StopFilter(tokens, AnalyzerUtil.loadStopList("add the personal stop list.text"));
+        tokens = new StopFilter(tokens, AnalyzerUtil.loadStopList("atire.text"));
 
         return new TokenStreamComponents(source, tokens);
     }
