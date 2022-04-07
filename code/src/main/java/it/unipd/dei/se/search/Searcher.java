@@ -3,6 +3,9 @@
 package it.unipd.dei.se.search;
 
 import it.unipd.dei.se.parse.document.ParsedDocument;
+import it.unipd.dei.se.parse.topic.ParsedTopic;
+import it.unipd.dei.se.parse.topic.XMLTopicParser;
+import opennlp.tools.parser.Parse;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
@@ -28,9 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 public class Searcher {
 
@@ -76,7 +77,7 @@ public class Searcher {
     /**
      * The topics to be searched
      */
-    private final QualityQuery[] topics;
+    private final ParsedTopic[] topics;
 
     /**
      * The query parser
@@ -158,9 +159,23 @@ public class Searcher {
         }
 
         try {
+            // TOPICS READING AND PARSING
+
             BufferedReader in = Files.newBufferedReader(Paths.get(topicsFile), StandardCharsets.UTF_8);
-            // TODO: read topics with XMLTopicParser
-            topics = new TrecTopicsReader().readQueries(in);
+            // old way of reading the topics
+            // topics = new TrecTopicsReader().readQueries(in);
+
+            // create a temp list
+            List<ParsedTopic> tempList = new ArrayList<>();
+            // create a topicparser
+            XMLTopicParser topicsParser = new XMLTopicParser(in);
+            // fill list with parsed topics
+            topicsParser.forEachRemaining(tempList::add);
+            System.out.println("templist length: " + tempList.size());
+            // convert list to array and assign to attribute topics
+            this.topics = tempList.toArray(new ParsedTopic[0]);
+            System.out.println("topics length: " + topics.length);
+
 
             in.close();
         } catch (IOException e) {
@@ -251,7 +266,6 @@ public class Searcher {
 
         // the start time of the searching
         final long start = System.currentTimeMillis();
-
         final Set<String> idField = new HashSet<>();
         idField.add(ParsedDocument.FIELDS.ID);
 
@@ -262,15 +276,17 @@ public class Searcher {
         String docID = null;
 
         try {
-            for (QualityQuery topic : topics) {
+            // for (QualityQuery topic : topics) {
+            for (ParsedTopic topic : topics) {
 
-                System.out.printf("Searching for topic %s.%n", topic.getQueryID());
+                System.out.printf("Searching for topic %s.%n", topic.getNumber());
 
                 queryBuilder = new BooleanQuery.Builder();
 
-                queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getValue(TOPIC_FIELDS.TITLE))), BooleanClause.Occur.SHOULD);
-                queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getValue(TOPIC_FIELDS.DESCRIPTION))),
+                queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getTitle())), BooleanClause.Occur.SHOULD);
+                queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getDescription())),
                         BooleanClause.Occur.SHOULD);
+                queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getObjects())), BooleanClause.Occur.SHOULD);
 
                 query = queryBuilder.build();
                 System.out.println("query: " + query.toString());
@@ -286,7 +302,7 @@ public class Searcher {
                 for (int i = 0, n = topDocs.length; i < n; i++) {
                     docID = reader.document(topDocs[i].doc, idField).get(ParsedDocument.FIELDS.ID);
 
-                    run.printf(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", topic.getQueryID(), docID, i, topDocs[i].score,
+                    run.printf(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", topic.getNumber(), docID, i, topDocs[i].score,
                             runID);
                 }
 
@@ -314,7 +330,7 @@ public class Searcher {
      */
     public static void main(String[] args) throws Exception {
 
-        final String topics = "experiment/topics_edited.txt";
+        final String topics = "experiment/topics-task2.xml";
 
         final String indexPath = "experiment/index";
 
@@ -324,10 +340,18 @@ public class Searcher {
 
         final int maxDocsRetrieved = 1000;
 
-        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
+        // TO TEST THAT THE TOPIC PARSER WORKS
+        /*BufferedReader in = Files.newBufferedReader(Paths.get(topics), StandardCharsets.UTF_8);
+        XMLTopicParser xtp = new XMLTopicParser(in);
+        System.out.println("start");
+        xtp.forEach(x -> System.out.println("topic"));*/
+
+
+
+        final Analyzer analyzer = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
                 LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).build();
 
-        Searcher s = new Searcher(a, new BM25Similarity(), indexPath, topics, 50, runID, runPath, maxDocsRetrieved);
+        Searcher s = new Searcher(analyzer, new BM25Similarity(), indexPath, topics, 50, runID, runPath, maxDocsRetrieved);
 
         s.search();
 
