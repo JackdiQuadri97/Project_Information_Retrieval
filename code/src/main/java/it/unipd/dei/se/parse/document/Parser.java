@@ -39,7 +39,7 @@ public class Parser extends DocumentParser {
             if (jsonParser.getCurrentName() == null)
                 jsonParser.nextToken();
 
-            if (jsonParser.currentToken() != JsonToken.START_OBJECT) {
+            if (jsonParser.currentToken()!=null &&jsonParser.currentToken() != JsonToken.START_OBJECT) {
                 System.err.printf("--> %s%n", jsonParser.currentToken());
                 throw new IllegalArgumentException("should be an object");
             }
@@ -48,27 +48,29 @@ public class Parser extends DocumentParser {
             //now we are at the start of the documents array
             //and the current token is '{'
 
-            final JsonNode root = objectMapper.readTree(jsonParser);
-            if (root == null) throw new IllegalArgumentException("Not valid json");
+               final JsonNode root = objectMapper.readTree(jsonParser);
 
-            final String id;
-            if (root.hasNonNull("id")) id = root.get("id").asText();
-            else throw new IllegalArgumentException("No valid id");
+               if (root == null ||root.isEmpty())
+                   return false;
 
-            String contents;
-            if (root.hasNonNull("contents")) contents = root.get("contents").asText();
-            else throw new IllegalArgumentException("No valid contents");
+               final String id;
+               if (root.hasNonNull("id")) id = root.get("id").asText();
+               else throw new IllegalArgumentException("No valid id");
 
-            String docT5Query = null;
-            if (contents.contains("<query>")) {
-                String[] contentsSplit = contents.split("<query>");
-                contents = contentsSplit[0].strip();
-                docT5Query = contentsSplit[1].replace("</query>", "").strip();
-            }
+               String contents;
+               if (root.hasNonNull("contents")) contents = root.get("contents").asText();
+               else throw new IllegalArgumentException("No valid contents");
 
-            document = new ParsedDocument(id, contents, docT5Query);
+               String docT5Query = null;
+               if (contents.contains("<query>")) {
+                   String[] contentsSplit = contents.split("<query>");
+                   contents = contentsSplit[0].strip();
+                   docT5Query = contentsSplit[1].replace("</query>", "").strip();
+               }
 
-            return true;
+               document = new ParsedDocument(id, contents, docT5Query);
+               return true;
+
         } catch (IOException e) {
             throw new IllegalArgumentException("Read failed", e);
         }

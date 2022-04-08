@@ -143,7 +143,7 @@ public class DirectoryIndexer {
         // if the directory does not already exist, create it
         if (Files.notExists(indexDir)) {
             try {
-                Files.createDirectory(indexDir);
+                Files.createDirectories(indexDir);
             } catch (Exception e) {
                 throw new IllegalArgumentException(
                         String.format("Unable to create directory %s: %s.", indexDir.toAbsolutePath().toString(),
