@@ -62,7 +62,7 @@ public class ParsedDocument {
      * @return the DocT5Query of the document.
      */
     public String getDocT5Query() {
-        return contents;
+        return docT5Query;
     }
 
 
