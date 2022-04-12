@@ -318,7 +318,7 @@ public class DirectoryIndexer {
         final int ramBuffer = 256;
         // final String docsPath = "C:\\Users\\ivanp\\Desktop\\datasets\\touche2022\\touche-task2-expandend_reduced";
         final String docsPath = "code/src/main/resource/corpus_folder";
-        final String indexPath = "experiment/index2";
+        final String indexPath = "experiment/index";
 
         final String extension = "jsonl";
         final int expectedDocs = 1;

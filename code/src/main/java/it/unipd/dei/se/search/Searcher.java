@@ -24,9 +24,7 @@ import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -312,8 +310,12 @@ public class Searcher {
                 for (int i = 0, n = topDocs.length; i < n; i++) {
                     docID = reader.document(topDocs[i].doc, idField).get(ParsedDocument.FIELDS.ID);
 
-                    run.printf(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", topic.getNumber(), docID, i, topDocs[i].score,
+                    run.printf(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", topic.getNumber(), docID, i+1, topDocs[i].score,
                             runID);
+                    Writer output = new BufferedWriter(new FileWriter(runID));  //clears file every time
+                    output.append(String.format(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", topic.getNumber(), docID, i+1, topDocs[i].score,
+                            runID));
+                    output.close();
                 }
 
                 run.flush();
@@ -340,7 +342,7 @@ public class Searcher {
      */
     public static void main(String[] args) throws Exception {
 
-        final String topics = "experiment/topics-task2.xml";
+        final String topics = "code/src/main/resource/topics-task2.xml";
 
         final String indexPath = "experiment/index";
 
