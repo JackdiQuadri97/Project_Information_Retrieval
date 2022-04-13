@@ -195,33 +195,40 @@ public class Searcher {
                     topics.length);
         }
 
-        // Checking that all fields have a corresponding weight
+        if(fieldWeights.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "No field specified");
+        }
+
+
+        // This should always contain all the fields in ParsedDocument.FIELDS except the ID
         List<String> expectedFields = Arrays.asList(
                 ParsedDocument.FIELDS.CONTENTS,
                 ParsedDocument.FIELDS.DOC_T5_QUERY);
-        for(String field: expectedFields) {
-            if(!fieldWeights.containsKey(field)) {
+
+        // Check that the passed fields are all contained in expectedFields
+        for(String field : fieldWeights.keySet()) {
+            if(!expectedFields.contains(field)) {
                 throw new IllegalArgumentException(
-                        "You didn't provide weights for all the fields"
-                );
+                        "Some of the specified fields are not fields of the parsed document class");
             }
         }
 
-        // Select just those weights that correspond to a field of ParsedDocument
-        // and that are != 0
-        HashMap<String, Float> selectedFieldWeights = new HashMap<>();
-        for(String field: expectedFields) {
-            Float value = fieldWeights.get(field);
-            if(value != 0) {
-                selectedFieldWeights.put(field, value);
-            }
+        System.out.println("Documents' fields in which to search: " + String.join(" ", fieldWeights.keySet()));
+
+
+        if(fieldWeights.size() == 1) {
+            System.out.println("Query parser type: QueryParser");
+            String singleField = fieldWeights.keySet().toArray(new String[] {})[0];
+            queryParser = new QueryParser(singleField, analyzer);
+        } else {
+            System.out.println("Query parser type: MultiFieldQueryParser");
+            queryParser = new MultiFieldQueryParser(
+                    fieldWeights.keySet().toArray(new String[] {}),
+                    analyzer,
+                    fieldWeights);
         }
 
-        queryParser = new MultiFieldQueryParser(
-                // get all the fields from DocumentParser
-                selectedFieldWeights.keySet().toArray(new String[] {}),
-                analyzer,
-                selectedFieldWeights);
 
         if (runID == null) {
             throw new NullPointerException("Run identifier cannot be null.");
@@ -372,8 +379,9 @@ public class Searcher {
                 LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).build();
 
         HashMap<String, Float> weights = new HashMap<>();
-        weights.put(ParsedDocument.FIELDS.CONTENTS, 1.0f);
-        weights.put(ParsedDocument.FIELDS.DOC_T5_QUERY, 1.0f);
+        weights.put(ParsedDocument.FIELDS.CONTENTS, 1.0F);
+        weights.put(ParsedDocument.FIELDS.DOC_T5_QUERY, 1.0F);
+        // weights.put("sas", 1.0F);
         Searcher s = new Searcher(analyzer, new BM25Similarity(), indexPath, topics,
                 50, runID, runPath, maxDocsRetrieved, weights);
 
