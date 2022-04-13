@@ -107,15 +107,14 @@ public class Searcher {
      * @param runID            the identifier of the run to be created.
      * @param runPath          the path where to store the run.
      * @param maxDocsRetrieved the maximum number of documents to be retrieved.
-     * @param fieldWeights     the weights to be given to the fields of the parsed document.
-     *                         The class expects it to have at least a value for each field but the ID.
-     *                         They fields with weights = 0 are not used in the search
+     * @param fieldsWeights    the fields of the parsed document in which to search, and their corresponding
+     *                         weights. If just one fieldWeight, weight is not considered
      * @throws NullPointerException     if any of the parameters is {@code null}.
      * @throws IllegalArgumentException if any of the parameters assumes invalid values.
      */
     public Searcher(final Analyzer analyzer, final Similarity similarity, final String indexPath,
                     final String topicsFile, final int expectedTopics, final String runID, final String runPath,
-                    final int maxDocsRetrieved, Map<String, Float> fieldWeights) {
+                    final int maxDocsRetrieved, Map<String, Float> fieldsWeights) {
 
         if (analyzer == null) {
             throw new NullPointerException("Analyzer cannot be null.");
@@ -195,7 +194,7 @@ public class Searcher {
                     topics.length);
         }
 
-        if(fieldWeights.isEmpty()) {
+        if(fieldsWeights.isEmpty()) {
             throw new IllegalArgumentException(
                     "No field specified");
         }
@@ -207,26 +206,26 @@ public class Searcher {
                 ParsedDocument.FIELDS.DOC_T5_QUERY);
 
         // Check that the passed fields are all contained in expectedFields
-        for(String field : fieldWeights.keySet()) {
+        for(String field : fieldsWeights.keySet()) {
             if(!expectedFields.contains(field)) {
                 throw new IllegalArgumentException(
                         "Some of the specified fields are not fields of the parsed document class");
             }
         }
 
-        System.out.println("Documents' fields in which to search: " + String.join(" ", fieldWeights.keySet()));
+        System.out.println("Documents' fields in which to search: " + String.join(" ", fieldsWeights.keySet()));
 
 
-        if(fieldWeights.size() == 1) {
+        if(fieldsWeights.size() == 1) {
             System.out.println("Query parser type: QueryParser");
-            String singleField = fieldWeights.keySet().toArray(new String[] {})[0];
+            String singleField = fieldsWeights.keySet().toArray(new String[] {})[0];
             queryParser = new QueryParser(singleField, analyzer);
         } else {
             System.out.println("Query parser type: MultiFieldQueryParser");
             queryParser = new MultiFieldQueryParser(
-                    fieldWeights.keySet().toArray(new String[] {}),
+                    fieldsWeights.keySet().toArray(new String[] {}),
                     analyzer,
-                    fieldWeights);
+                    fieldsWeights);
         }
 
 
