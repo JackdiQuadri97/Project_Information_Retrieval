@@ -25,12 +25,14 @@ import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Searcher {
 
@@ -105,12 +107,14 @@ public class Searcher {
      * @param runID            the identifier of the run to be created.
      * @param runPath          the path where to store the run.
      * @param maxDocsRetrieved the maximum number of documents to be retrieved.
+     * @param fieldWeights     the weights to be given to the fields of the parsed document.
+     *                         The class expects it to have at least a value for each field but the ID
      * @throws NullPointerException     if any of the parameters is {@code null}.
      * @throws IllegalArgumentException if any of the parameters assumes invalid values.
      */
     public Searcher(final Analyzer analyzer, final Similarity similarity, final String indexPath,
                     final String topicsFile, final int expectedTopics, final String runID, final String runPath,
-                    final int maxDocsRetrieved) {
+                    final int maxDocsRetrieved, Map<String, Float> fieldWeights) {
 
         if (analyzer == null) {
             throw new NullPointerException("Analyzer cannot be null.");
@@ -131,19 +135,19 @@ public class Searcher {
         final Path indexDir = Paths.get(indexPath);
         if (!Files.isReadable(indexDir)) {
             throw new IllegalArgumentException(
-                    String.format("Index directory %s cannot be read.", indexDir.toAbsolutePath().toString()));
+                    String.format("Index directory %s cannot be read.", indexDir.toAbsolutePath()));
         }
 
         if (!Files.isDirectory(indexDir)) {
             throw new IllegalArgumentException(String.format("%s expected to be a directory where to search the index.",
-                    indexDir.toAbsolutePath().toString()));
+                    indexDir.toAbsolutePath()));
         }
 
         try {
             reader = DirectoryReader.open(FSDirectory.open(indexDir));
         } catch (IOException e) {
             throw new IllegalArgumentException(String.format("Unable to create the index reader for directory %s: %s.",
-                    indexDir.toAbsolutePath().toString(), e.getMessage()), e);
+                    indexDir.toAbsolutePath(), e.getMessage()), e);
         }
 
         searcher = new IndexSearcher(reader);
@@ -190,22 +194,34 @@ public class Searcher {
                     topics.length);
         }
 
+        // Checking that all fields have a corresponding weight
+        List<String> expectedFields = Arrays.asList(
+                ParsedDocument.FIELDS.CONTENTS,
+                ParsedDocument.FIELDS.DOC_T5_QUERY);
+        for(String field: expectedFields) {
+            if(!fieldWeights.containsKey(field)) {
+                throw new IllegalArgumentException(
+                        "You didn't provide weights for all the fields"
+                );
+            }
+        }
 
-        Map<String, Float> weights = new HashMap<>();
-        weights.put(ParsedDocument.FIELDS.CONTENTS, 1.0f);
-        weights.put(ParsedDocument.FIELDS.DOC_T5_QUERY, 1.0f);
-        // (when testing with an index that was not produced by this system,
-        // put here the name of the field of the document in which you want to search)
-        // Defines in which fields of the documents to search.
-        // Use MultiFieldQueryParser to search in multiple fields.
-        // queryParser = new QueryParser(ParsedDocument.FIELDS.CONTENTS, analyzer);
+        // Select just those weights that correspond to a field of ParsedDocument
+        // and that are != 0
+        HashMap<String, Float> selectedFieldWeights = new HashMap<>();
+        for(String field: expectedFields) {
+            Float value = fieldWeights.get(field);
+            if(value != 0) {
+                selectedFieldWeights.put(field, value);
+            }
+        }
+
+
         queryParser = new MultiFieldQueryParser(
-                new String[]{
-                        ParsedDocument.FIELDS.CONTENTS,
-                        ParsedDocument.FIELDS.DOC_T5_QUERY
-                },
+                // get all the fields from DocumentParser
+                selectedFieldWeights.keySet().toArray(new String[] {}),
                 analyzer,
-                weights);
+                selectedFieldWeights);
 
         if (runID == null) {
             throw new NullPointerException("Run identifier cannot be null.");
@@ -229,12 +245,12 @@ public class Searcher {
         final Path runDir = Paths.get(runPath);
         if (!Files.isWritable(runDir)) {
             throw new IllegalArgumentException(
-                    String.format("Run directory %s cannot be written.", runDir.toAbsolutePath().toString()));
+                    String.format("Run directory %s cannot be written.", runDir.toAbsolutePath()));
         }
 
         if (!Files.isDirectory(runDir)) {
             throw new IllegalArgumentException(String.format("%s expected to be a directory where to write the run.",
-                    runDir.toAbsolutePath().toString()));
+                    runDir.toAbsolutePath()));
         }
 
         Path runFile = runDir.resolve(runID + ".txt");
@@ -355,7 +371,11 @@ public class Searcher {
         final Analyzer analyzer = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
                 LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).build();
 
-        Searcher s = new Searcher(analyzer, new BM25Similarity(), indexPath, topics, 50, runID, runPath, maxDocsRetrieved);
+        HashMap<String, Float> weights = new HashMap<>();
+        weights.put(ParsedDocument.FIELDS.CONTENTS, 1.0f);
+        weights.put(ParsedDocument.FIELDS.DOC_T5_QUERY, 1.0f);
+        Searcher s = new Searcher(analyzer, new BM25Similarity(), indexPath, topics,
+                50, runID, runPath, maxDocsRetrieved, weights);
 
         s.search();
 
