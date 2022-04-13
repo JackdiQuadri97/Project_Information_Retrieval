@@ -108,7 +108,8 @@ public class Searcher {
      * @param runPath          the path where to store the run.
      * @param maxDocsRetrieved the maximum number of documents to be retrieved.
      * @param fieldWeights     the weights to be given to the fields of the parsed document.
-     *                         The class expects it to have at least a value for each field but the ID
+     *                         The class expects it to have at least a value for each field but the ID.
+     *                         They fields with weights = 0 are not used in the search
      * @throws NullPointerException     if any of the parameters is {@code null}.
      * @throws IllegalArgumentException if any of the parameters assumes invalid values.
      */
@@ -215,7 +216,6 @@ public class Searcher {
                 selectedFieldWeights.put(field, value);
             }
         }
-
 
         queryParser = new MultiFieldQueryParser(
                 // get all the fields from DocumentParser
