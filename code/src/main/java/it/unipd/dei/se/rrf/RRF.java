@@ -1,9 +1,8 @@
 package it.unipd.dei.se.rrf;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class RRF {
     public static void main(String[] args) {
@@ -16,6 +15,7 @@ public class RRF {
 
         argsList.add("experiment/seupd2122-kueri.txt");
         argsList.add("experiment/seupd2122-kueri2.txt");
+
         argsList.forEach(run -> {
             try (BufferedReader br = new BufferedReader(new FileReader(run))) {
                 for (String document; (document = br.readLine()) != null; ) {
@@ -34,14 +34,32 @@ public class RRF {
         for (int i = 0; i < 101; i++)
             scores.add(new ArrayList<>());
 
-        for(int i=0; i<rrfs.size(); i++ ){
+        for (int i = 0; i < rrfs.size(); i++) {
             List<KeyScorePair> ofTopic = scores.get(i);
             for (Map.Entry<String, Double> entry : rrfs.get(i).entrySet()) {
                 ofTopic.add(new KeyScorePair(entry.getKey(), entry.getValue()));
             }
             ofTopic.sort(new CustomComparator());
         }
-        System.out.println(scores);
+
+        String outPath = String.format("experiment/%s", String.join("_", argsList.stream().map(path -> path.split("/")[1].replace(".txt", "")).collect(Collectors.toList())));
+        try (Writer output = new BufferedWriter(new FileWriter(outPath))) {
+            for (int i = 0; i < scores.size(); i++) {
+                List<KeyScorePair> score = scores.get(i);
+                for (int j = 0; j < score.size(); j++) {
+                    output.append(
+                            String.format(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n",
+                                    i,
+                                    score.get(j).getKey(),
+                                    j + 1,
+                                    score.get(j).getScore(),
+                                    "RRF-kueri-2122"));
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static double rff(double k, double rank) {
