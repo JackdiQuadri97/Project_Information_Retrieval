@@ -31,6 +31,8 @@ public class BodyField extends Field {
         BODY_TYPE.setTokenized(true);
         //do not store in memory
         BODY_TYPE.setStored(false);
+        //storing termvectors
+        BODY_TYPE.setStoreTermVectors(true);
     }
 
 
