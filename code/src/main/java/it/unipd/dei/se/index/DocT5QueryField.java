@@ -3,20 +3,16 @@
 package it.unipd.dei.se.index;
 
 
-
 import it.unipd.dei.se.parse.document.ParsedDocument;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexOptions;
-
-import java.io.Reader;
 
 /**
  * Represents a {@link Field} for containing the body of a document.
  * <p>
  * It is a tokenized field, not stored, keeping only document ids and term frequencies (see {@link
  * IndexOptions#DOCS_AND_FREQS} in order to minimize the space occupation.
- *
  */
 public class DocT5QueryField extends Field {
 

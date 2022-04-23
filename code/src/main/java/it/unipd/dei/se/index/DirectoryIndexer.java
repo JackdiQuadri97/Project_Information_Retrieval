@@ -7,9 +7,7 @@ import it.unipd.dei.se.parse.document.ParsedDocument;
 import it.unipd.dei.se.parse.document.Parser;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
-import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
-import org.apache.lucene.analysis.en.PorterStemFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -230,6 +228,35 @@ public class DirectoryIndexer {
     }
 
     /**
+     * Main method of the class. Just for testing purposes.
+     *
+     * @param args command line arguments.
+     * @throws Exception if something goes wrong while indexing.
+     */
+
+    public static void main(String[] args) throws Exception {
+
+        final int ramBuffer = 256;
+        // final String docsPath = "C:\\Users\\ivanp\\Desktop\\datasets\\touche2022\\touche-task2-expandend_reduced";
+        final String docsPath = "code/src/main/resource/corpus_folder";
+        final String indexPath = "experiment/index";
+
+        final String extension = "jsonl";
+        final int expectedDocs = 1;
+        final String charsetName = "ISO-8859-1";
+
+        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
+                LowerCaseFilterFactory.class).build();
+
+        DirectoryIndexer i = new DirectoryIndexer(a, new BM25Similarity(), ramBuffer, indexPath, docsPath, extension,
+                charsetName, expectedDocs, Parser.class);
+
+        i.index();
+
+
+    }
+
+    /**
      * Indexes the documents.
      *
      * @throws IOException if something goes wrong while indexing.
@@ -278,12 +305,9 @@ public class DirectoryIndexer {
 
                     }
 
-                }
-                else
-                {
+                } else {
                     //here i notify if i skip a file
                     System.out.printf("Ignoring file: %s", file.getFileName().toString());
-
 
 
                 }
@@ -303,36 +327,6 @@ public class DirectoryIndexer {
                 bytesCount / MBYTE, (System.currentTimeMillis() - start) / 1000);
 
         System.out.printf("#### Indexing complete ####%n");
-    }
-
-
-    /**
-     * Main method of the class. Just for testing purposes.
-     *
-     * @param args command line arguments.
-     * @throws Exception if something goes wrong while indexing.
-     * */
-
-    public static void main(String[] args) throws Exception {
-
-        final int ramBuffer = 256;
-        // final String docsPath = "C:\\Users\\ivanp\\Desktop\\datasets\\touche2022\\touche-task2-expandend_reduced";
-        final String docsPath = "code/src/main/resource/corpus_folder";
-        final String indexPath = "experiment/index";
-
-        final String extension = "jsonl";
-        final int expectedDocs = 1;
-        final String charsetName = "ISO-8859-1";
-
-        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).build();
-
-        DirectoryIndexer i = new DirectoryIndexer(a, new BM25Similarity(), ramBuffer, indexPath, docsPath, extension,
-              charsetName, expectedDocs, Parser.class);
-
-         i.index();
-
-
     }
 
 }

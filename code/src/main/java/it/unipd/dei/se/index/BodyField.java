@@ -3,7 +3,6 @@
 package it.unipd.dei.se.index;
 
 
-
 import it.unipd.dei.se.parse.document.ParsedDocument;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
@@ -16,7 +15,6 @@ import java.io.Reader;
  * <p>
  * It is a tokenized field, not stored, keeping only document ids and term frequencies (see {@link
  * IndexOptions#DOCS_AND_FREQS} in order to minimize the space occupation.
- *
  */
 public class BodyField extends Field {
 

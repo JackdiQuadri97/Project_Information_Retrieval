@@ -8,10 +8,11 @@ import java.io.Reader;
 
 import static it.unipd.dei.se.analyze.AnalyzerUtil.consumeTokenStream;
 
-public class BaselineAnalyzer extends Analyzer{
+public class BaselineAnalyzer extends Analyzer {
     public BaselineAnalyzer() {
         super();
     }
+
     protected TokenStreamComponents createComponents(String fieldName) {
 
         final Tokenizer source = new StandardTokenizer();
@@ -39,7 +40,6 @@ public class BaselineAnalyzer extends Analyzer{
      * Main method of the class.
      *
      * @param args command line arguments.
-     *
      * @throws IOException if something goes wrong while processing the text.
      */
     public static void main(String[] args) throws IOException {

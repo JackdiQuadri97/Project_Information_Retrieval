@@ -51,7 +51,6 @@ public class AnalyzerUtil {
      *
      * @param a the analyzer to use.
      * @param t the text to process.
-     *
      * @throws IOException if something goes wrong while processing the text.
      */
     static void consumeTokenStream(final Analyzer a, final String t) throws IOException {
@@ -125,9 +124,7 @@ public class AnalyzerUtil {
      * Loads the required stop list among those available in the {@code resources} folder.
      *
      * @param stopFile the name of the file containing the stop list.
-     *
      * @return the stop list
-     *
      * @throws IllegalStateException if there is any issue while loading the stop list.
      */
     static CharArraySet loadStopList(final String stopFile) {
@@ -168,9 +165,7 @@ public class AnalyzerUtil {
      * Loads the required Apache OpenNLP POS tagger model among those available in the {@code resources} folder.
      *
      * @param modelFile the name of the file containing the model.
-     *
      * @return the required Apache OpenNLP model.
-     *
      * @throws IllegalStateException if there is any issue while loading the model.
      */
     static NLPPOSTaggerOp loadPosTaggerModel(final String modelFile) {
@@ -209,9 +204,7 @@ public class AnalyzerUtil {
      * Loads the required Apache OpenNLP sentence detector model among those available in the {@code resources} folder.
      *
      * @param modelFile the name of the file containing the model.
-     *
      * @return the required Apache OpenNLP model.
-     *
      * @throws IllegalStateException if there is any issue while loading the model.
      */
     static NLPSentenceDetectorOp loadSentenceDetectorModel(final String modelFile) {
@@ -250,9 +243,7 @@ public class AnalyzerUtil {
      * Loads the required Apache OpenNLP tokenizer model among those available in the {@code resources} folder.
      *
      * @param modelFile the name of the file containing the model.
-     *
      * @return the required Apache OpenNLP model.
-     *
      * @throws IllegalStateException if there is any issue while loading the model.
      */
     static NLPTokenizerOp loadTokenizerModel(final String modelFile) {
@@ -291,9 +282,7 @@ public class AnalyzerUtil {
      * Loads the required Apache OpenNLP lemmatizer model among those available in the {@code resources} folder.
      *
      * @param modelFile the name of the file containing the model.
-     *
      * @return the required Apache OpenNLP model.
-     *
      * @throws IllegalStateException if there is any issue while loading the model.
      */
     static NLPLemmatizerOp loadLemmatizerModel(final String modelFile) {
@@ -332,9 +321,7 @@ public class AnalyzerUtil {
      * Loads the required Apache OpenNLP NER tagger model among those available in the {@code resources} folder.
      *
      * @param modelFile the name of the file containing the model.
-     *
      * @return the required Apache OpenNLP model.
-     *
      * @throws IllegalStateException if there is any issue while loading the model.
      */
     static NLPNERTaggerOp loadLNerTaggerModel(final String modelFile) {

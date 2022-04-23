@@ -5,14 +5,11 @@ package it.unipd.dei.se.search;
 import it.unipd.dei.se.parse.document.ParsedDocument;
 import it.unipd.dei.se.parse.topic.ParsedTopic;
 import it.unipd.dei.se.parse.topic.XMLTopicParser;
-import opennlp.tools.parser.Parse;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
-import org.apache.lucene.benchmark.quality.QualityQuery;
-import org.apache.lucene.benchmark.quality.trec.TrecTopicsReader;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
@@ -25,14 +22,12 @@ import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Searcher {
 
@@ -194,7 +189,7 @@ public class Searcher {
                     topics.length);
         }
 
-        if(fieldsWeights.isEmpty()) {
+        if (fieldsWeights.isEmpty()) {
             throw new IllegalArgumentException(
                     "No field specified");
         }
@@ -206,8 +201,8 @@ public class Searcher {
                 ParsedDocument.FIELDS.DOC_T5_QUERY);
 
         // Check that the passed fields are all contained in expectedFields
-        for(String field : fieldsWeights.keySet()) {
-            if(!expectedFields.contains(field)) {
+        for (String field : fieldsWeights.keySet()) {
+            if (!expectedFields.contains(field)) {
                 throw new IllegalArgumentException(
                         "Some of the specified fields are not fields of the parsed document class");
             }
@@ -216,14 +211,14 @@ public class Searcher {
         System.out.println("Documents' fields in which to search: " + String.join(" ", fieldsWeights.keySet()));
 
 
-        if(fieldsWeights.size() == 1) {
+        if (fieldsWeights.size() == 1) {
             System.out.println("Query parser type: QueryParser");
-            String singleField = fieldsWeights.keySet().toArray(new String[] {})[0];
+            String singleField = fieldsWeights.keySet().toArray(new String[]{})[0];
             queryParser = new QueryParser(singleField, analyzer);
         } else {
             System.out.println("Query parser type: MultiFieldQueryParser");
             queryParser = new MultiFieldQueryParser(
-                    fieldsWeights.keySet().toArray(new String[] {}),
+                    fieldsWeights.keySet().toArray(new String[]{}),
                     analyzer,
                     fieldsWeights);
         }
@@ -332,10 +327,10 @@ public class Searcher {
                 for (int i = 0, n = topDocs.length; i < n; i++) {
                     docID = reader.document(topDocs[i].doc, idField).get(ParsedDocument.FIELDS.ID);
 
-                    run.printf(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", topic.getNumber(), docID, i+1, topDocs[i].score,
+                    run.printf(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", topic.getNumber(), docID, i + 1, topDocs[i].score,
                             runID);
                     Writer output = new BufferedWriter(new FileWriter(runID));  //clears file every time
-                    output.append(String.format(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", topic.getNumber(), docID, i+1, topDocs[i].score,
+                    output.append(String.format(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", topic.getNumber(), docID, i + 1, topDocs[i].score,
                             runID));
                     output.close();
                 }
