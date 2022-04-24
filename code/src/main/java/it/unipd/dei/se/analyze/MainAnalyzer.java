@@ -1,5 +1,6 @@
 package it.unipd.dei.se.analyze;
 
+import it.unipd.dei.se.filter.MultipleCharsFilter;
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.analysis.en.EnglishPossessiveFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
@@ -26,6 +27,7 @@ public class MainAnalyzer extends Analyzer {
         TokenStream tokens = new LowerCaseFilter(source);
 
         tokens = new EnglishPossessiveFilter(tokens);
+        tokens = new MultipleCharsFilter(tokens);
 
         tokens = new StopFilter(tokens, AnalyzerUtil.loadStopList("atire.text"));
 
