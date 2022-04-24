@@ -127,7 +127,7 @@ public class AnalyzerUtil {
      * @return the stop list
      * @throws IllegalStateException if there is any issue while loading the stop list.
      */
-    static CharArraySet loadStopList(final String stopFile) {
+    public static CharArraySet loadStopList(final String stopFile) {
 
         if (stopFile == null) {
             throw new NullPointerException("Stop list file name cannot be null.");

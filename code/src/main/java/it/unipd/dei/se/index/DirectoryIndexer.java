@@ -14,10 +14,10 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
 
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.*;
@@ -235,25 +235,30 @@ public class DirectoryIndexer {
      */
 
     public static void main(String[] args) throws Exception {
+        doIndex(args[0], null, null);
+    }
 
+    public static void doIndex(@NotNull String indexPath, @NotNull Similarity similarity, @NotNull String stopWordsFilePath) throws IOException {
         final int ramBuffer = 256;
         // final String docsPath = "C:\\Users\\ivanp\\Desktop\\datasets\\touche2022\\touche-task2-expandend_reduced";
         final String docsPath = "code/src/main/resource/corpus_folder";
-        final String indexPath = "experiment/index";
 
         final String extension = "jsonl";
         final int expectedDocs = 1;
         final String charsetName = "ISO-8859-1";
 
-        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).build();
+        final Analyzer a = CustomAnalyzer.builder(Path.of("code/src/main/resource")).withTokenizer(StandardTokenizerFactory.class)
+                .addTokenFilter(LowerCaseFilterFactory.class)
+                .addTokenFilter("stop",
+                        "ignoreCase", "true",
+                        "words", stopWordsFilePath,
+                        "format", "wordset")
+                .build();
 
-        DirectoryIndexer i = new DirectoryIndexer(a, new BM25Similarity(), ramBuffer, indexPath, docsPath, extension,
+        DirectoryIndexer i = new DirectoryIndexer(a, similarity, ramBuffer, indexPath, docsPath, extension,
                 charsetName, expectedDocs, Parser.class);
 
         i.index();
-
-
     }
 
     /**

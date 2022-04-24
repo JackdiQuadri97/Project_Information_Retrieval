@@ -24,7 +24,7 @@ public class RF {
 
         argsList.add("code/src/main/resource/qrels/example.txt");
 
-        List<List<Map<String, Integer>>> termFreq = getTermFrequencies(argsList);
+        List<List<Map<String, Integer>>> termFreq = getTopicTermFrequencies(argsList);
 
         search(termFreq);
         System.out.println(termFreq);
@@ -96,7 +96,7 @@ public class RF {
         System.out.printf("#### Searching complete ####%n");
     }
 
-    private static List<List<Map<String, Integer>>> getTermFrequencies(List<String> runs) throws IOException {
+    private static List<List<Map<String, Integer>>> getTopicTermFrequencies(List<String> runs) throws IOException {
         List<List<Map<String, Integer>>> topicsRfs = new ArrayList<>();
         for (int i = 0; i < 101; i++) {
             List<Map<String, Integer>> relevance = new ArrayList<>();

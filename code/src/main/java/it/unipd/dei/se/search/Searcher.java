@@ -2,6 +2,7 @@
 
 package it.unipd.dei.se.search;
 
+import com.beust.jcommander.internal.Nullable;
 import it.unipd.dei.se.filter.Filter;
 import it.unipd.dei.se.parse.document.ParsedDocument;
 import it.unipd.dei.se.parse.topic.ParsedTopic;
@@ -21,8 +22,8 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.QueryBuilder;
 
+import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -284,12 +285,43 @@ public class Searcher {
     }
 
     /**
+     * Main method of the class. Just for testing purposes.
+     *
+     * @param args command line arguments.
+     * @throws Exception if something goes wrong while indexing.
+     */
+    public static void main(String[] args) throws Exception {
+
+        doSearch(args[0], args[1], args[2], Boolean.parseBoolean(args[3]), new BM25Similarity());
+
+    }
+
+    public static void doSearch(@NotNull String indexPath, @NotNull String runID, String runPath, boolean filter, @Nullable Similarity similarity) throws IOException, ParseException {
+        final String topics = "code/src/main/resource/topics-task2.xml";
+
+        final int maxDocsRetrieved = 1000;
+
+        final Analyzer analyzer = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
+                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).build();
+
+        HashMap<String, Float> weights = new HashMap<>();
+        weights.put(ParsedDocument.FIELDS.CONTENTS, 1.0F);
+        weights.put(ParsedDocument.FIELDS.DOC_T5_QUERY, 1.0F);
+        // weights.put("sas", 1.0F);
+        Searcher s = new Searcher(analyzer, similarity, indexPath, topics,
+                50, runID, runPath, maxDocsRetrieved, weights);
+
+        s.search(filter);
+    }
+
+    /**
      * /** Searches for the specified topics.
      *
+     * @param filter
      * @throws IOException    if something goes wrong while searching.
      * @throws ParseException if something goes wrong while parsing topics.
      */
-    public void search() throws IOException, ParseException {
+    public void search(boolean filter) throws IOException, ParseException {
 
         System.out.printf("%n#### Start searching ####%n");
 
@@ -312,7 +344,8 @@ public class Searcher {
 
                 queryBuilder = new BooleanQuery.Builder();
 
-                queryBuilder = Filter.filterAnd(topic.getObjects());
+                if (filter)
+                    queryBuilder = Filter.filterAnd(topic.getObjects());
 
                 // define the terms to put in the query and if they SHOULD or MUST be present
                 queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getTitle())), BooleanClause.Occur.SHOULD);
@@ -353,39 +386,6 @@ public class Searcher {
         System.out.printf("%d topic(s) searched in %d seconds.%n", topics.length, elapsedTime / 1000);
 
         System.out.printf("#### Searching complete ####%n");
-    }
-
-    /**
-     * Main method of the class. Just for testing purposes.
-     *
-     * @param args command line arguments.
-     * @throws Exception if something goes wrong while indexing.
-     */
-    public static void main(String[] args) throws Exception {
-
-        final String topics = "code/src/main/resource/topics-task2.xml";
-
-        final String indexPath = "experiment/index";
-
-        final String runPath = "experiment";
-
-        final String runID = "seupd2122-kueri";
-
-        final int maxDocsRetrieved = 1000;
-
-        final Analyzer analyzer = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).build();
-
-        HashMap<String, Float> weights = new HashMap<>();
-        weights.put(ParsedDocument.FIELDS.CONTENTS, 1.0F);
-        weights.put(ParsedDocument.FIELDS.DOC_T5_QUERY, 1.0F);
-        // weights.put("sas", 1.0F);
-        Searcher s = new Searcher(analyzer, new BM25Similarity(), indexPath, topics,
-                50, runID, runPath, maxDocsRetrieved, weights);
-
-        s.search();
-
-
     }
 
 }
