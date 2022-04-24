@@ -312,19 +312,20 @@ public class Searcher {
         weights.put(ParsedDocument.FIELDS.DOC_T5_QUERY, 1.0F);
         // weights.put("sas", 1.0F);
         Searcher s = new Searcher(analyzer, similarity, indexPath, topics,
-                50, runID, runPath, maxDocsRetrieved, weights);
+                50, runID + "_" + stopWordsFilePath.split("\\.")[0] + "_" + similarity.toString().split(" ")[0] + "_" + filter, runPath, maxDocsRetrieved, weights);
 
-        s.search(filter);
+        s.search(filter, stopWordsFilePath, similarity.toString());
     }
 
     /**
      * /** Searches for the specified topics.
      *
      * @param filter
+     * @param stopWordsFilePath
      * @throws IOException    if something goes wrong while searching.
      * @throws ParseException if something goes wrong while parsing topics.
      */
-    public void search(boolean filter) throws IOException, ParseException {
+    public void search(boolean filter, String stopWordsFilePath, String similarity) throws IOException, ParseException {
 
         System.out.printf("%n#### Start searching ####%n");
 
@@ -338,6 +339,7 @@ public class Searcher {
         TopDocs topDocsObject = null;
         ScoreDoc[] topDocs = null;
         String docID = null;
+        Writer output = new BufferedWriter(new FileWriter(runID));  //clears file every time
 
         try {
             // SEARCHING
@@ -366,21 +368,15 @@ public class Searcher {
                 // adding the retrieved documents for this topic to the run file
                 for (int i = 0, n = topDocs.length; i < n; i++) {
                     docID = reader.document(topDocs[i].doc, idField).get(ParsedDocument.FIELDS.ID);
-
                     run.printf(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", topic.getNumber(), docID, i + 1, topDocs[i].score,
                             runID);
-                    Writer output = new BufferedWriter(new FileWriter(runID));  //clears file every time
-                    output.append(String.format(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", topic.getNumber(), docID, i + 1, topDocs[i].score,
-                            runID));
-                    output.close();
+
                 }
 
                 run.flush();
-
             }
         } finally {
             run.close();
-
             reader.close();
         }
 
