@@ -2,6 +2,7 @@
 
 package it.unipd.dei.se.search;
 
+import it.unipd.dei.se.filter.Filter;
 import it.unipd.dei.se.parse.document.ParsedDocument;
 import it.unipd.dei.se.parse.topic.ParsedTopic;
 import it.unipd.dei.se.parse.topic.XMLTopicParser;
@@ -20,6 +21,7 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.QueryBuilder;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -309,6 +311,8 @@ public class Searcher {
                 System.out.printf("Searching for topic %s.%n", topic.getNumber());
 
                 queryBuilder = new BooleanQuery.Builder();
+
+                queryBuilder = Filter.filterAnd(topic.getObjects());
 
                 // define the terms to put in the query and if they SHOULD or MUST be present
                 queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getTitle())), BooleanClause.Occur.SHOULD);
