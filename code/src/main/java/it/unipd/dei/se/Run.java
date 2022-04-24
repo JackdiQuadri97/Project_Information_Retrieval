@@ -1,6 +1,8 @@
 package it.unipd.dei.se;
 
 import it.unipd.dei.se.index.DirectoryIndexer;
+import it.unipd.dei.se.rf.RF;
+import it.unipd.dei.se.rrf.RRF;
 import it.unipd.dei.se.search.Searcher;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
@@ -17,7 +19,8 @@ public class Run {
         boolean filter = args.length > 3 && Boolean.parseBoolean(args[3]);
         String matching = args.length > 4 ? args[4] : "bm25";
         String runId = args.length > 5 ? args[5] : "seupd2122-kueri";
-        String runDirectoryPath = args.length > 6 ? args[6] : "experiment";
+        String runDirectoryPath = args.length > 6 ? args[6] : "runs";
+        String qrelFilePath = args.length > 7 ? args[7] : "code/src/main/resource/qrels/example.txt";
 
 
         Similarity similarity = null;
@@ -41,11 +44,13 @@ public class Run {
                 doIndex(indexDirectoryPath, stopListFilePath, matching, similarity);
                 break;
             case "search":
-                doSearch(indexDirectoryPath, runId, runDirectoryPath, filter, similarity);
+                doSearch(indexDirectoryPath, runId, runDirectoryPath, stopListFilePath, filter, similarity);
                 break;
             case "rf":
+                doRFSearch(indexDirectoryPath, runId, runDirectoryPath, qrelFilePath);
                 break;
             case "rrf":
+                doRRFSearch(runId, "rrf");
                 break;
         }
     }
@@ -58,10 +63,26 @@ public class Run {
         }
     }
 
-    private static void doSearch(String indexDirectoryPath, String runId, String runDirectoryPath, boolean filter, Similarity similarity) {
+    private static void doSearch(String indexDirectoryPath, String runId, String runDirectoryPath, String stopWordsFilePath, boolean filter, Similarity similarity) {
         try {
-            Searcher.doSearch(indexDirectoryPath, runId, runDirectoryPath, filter, similarity);
+            Searcher.doSearch(indexDirectoryPath, runId, runDirectoryPath, stopWordsFilePath, filter, similarity);
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void doRFSearch(String indexDirectoryPath, String runId, String runDirectoryPath, String qrelFilePath) {
+        try {
+            RF.doSearch(indexDirectoryPath, runDirectoryPath, runId, qrelFilePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void doRRFSearch(String runId, String runDirectoryPath) {
+        try {
+            RRF.doSearch(runDirectoryPath, runId);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

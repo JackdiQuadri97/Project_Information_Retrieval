@@ -9,7 +9,6 @@ import it.unipd.dei.se.parse.topic.ParsedTopic;
 import it.unipd.dei.se.parse.topic.XMLTopicParser;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
-import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.index.DirectoryReader;
@@ -292,17 +291,21 @@ public class Searcher {
      */
     public static void main(String[] args) throws Exception {
 
-        doSearch(args[0], args[1], args[2], Boolean.parseBoolean(args[3]), new BM25Similarity());
+        doSearch(args[0], args[1], args[2], args[4], Boolean.parseBoolean(args[3]), new BM25Similarity());
 
     }
 
-    public static void doSearch(@NotNull String indexPath, @NotNull String runID, String runPath, boolean filter, @Nullable Similarity similarity) throws IOException, ParseException {
+    public static void doSearch(@NotNull String indexPath, @NotNull String runID, String runPath, String stopWordsFilePath, boolean filter, @Nullable Similarity similarity) throws IOException, ParseException {
         final String topics = "code/src/main/resource/topics-task2.xml";
 
         final int maxDocsRetrieved = 1000;
 
-        final Analyzer analyzer = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).build();
+        final Analyzer analyzer = CustomAnalyzer.builder(Path.of("code/src/main/resource")).withTokenizer(StandardTokenizerFactory.class)
+                .addTokenFilter(LowerCaseFilterFactory.class)
+                .addTokenFilter("stop",
+                        "ignoreCase", "true",
+                        "words", stopWordsFilePath,
+                        "format", "wordset").build();
 
         HashMap<String, Float> weights = new HashMap<>();
         weights.put(ParsedDocument.FIELDS.CONTENTS, 1.0F);

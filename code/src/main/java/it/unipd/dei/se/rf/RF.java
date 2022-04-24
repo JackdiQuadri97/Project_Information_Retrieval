@@ -20,18 +20,16 @@ public class RF {
 
     public static void main(String[] args) throws IOException, ParseException {
 
-        List<String> argsList = new ArrayList<>(Arrays.asList(args));
-
-        argsList.add("code/src/main/resource/qrels/example.txt");
-
-        List<List<Map<String, Integer>>> termFreq = getTopicTermFrequencies(argsList);
-
-        search(termFreq);
-        System.out.println(termFreq);
 
     }
 
-    public static void search(List<List<Map<String, Integer>>> termFreq) throws IOException, ParseException {
+    public static void doSearch(String indexDirectoryPath, String outputPath, String runId, String qrelsFilePath) throws IOException, ParseException {
+        List<List<Map<String, Integer>>> termFreq = getTopicTermFrequencies(indexDirectoryPath, qrelsFilePath);
+
+        search(indexDirectoryPath, outputPath, runId, termFreq);
+    }
+
+    public static void search(String indexDirectoryPath, String outputPath, String runId, List<List<Map<String, Integer>>> termFreq) throws IOException, ParseException {
 
         System.out.printf("%n#### Start searching ####%n");
 
@@ -46,9 +44,9 @@ public class RF {
         ScoreDoc[] topDocs;
         String docID;
 
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("experiment/index")));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexDirectoryPath)));
         IndexSearcher searcher = new IndexSearcher(reader);
-        Writer output = new BufferedWriter(new FileWriter("runs/RF.txt"));  //clears file every time
+        Writer output = new BufferedWriter(new FileWriter(outputPath + "/" + runId + ".txt"));  //clears file every time
 
         try {
             // SEARCHING
@@ -78,7 +76,7 @@ public class RF {
                 for (int m = 0, n = topDocs.length; m < n; m++) {
                     docID = reader.document(topDocs[m].doc, idField).get(ParsedDocument.FIELDS.ID);
                     output.append(String.format(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", i, docID, m + 1, topDocs[m].score,
-                            "RF"));
+                            runId));
                 }
 
                 output.flush();
@@ -96,7 +94,7 @@ public class RF {
         System.out.printf("#### Searching complete ####%n");
     }
 
-    private static List<List<Map<String, Integer>>> getTopicTermFrequencies(List<String> runs) throws IOException {
+    private static List<List<Map<String, Integer>>> getTopicTermFrequencies(String indexDirectoryPath, String qrelsFilePath) throws IOException {
         List<List<Map<String, Integer>>> topicsRfs = new ArrayList<>();
         for (int i = 0; i < 101; i++) {
             List<Map<String, Integer>> relevance = new ArrayList<>();
@@ -105,55 +103,53 @@ public class RF {
             topicsRfs.add(relevance);
         }
 
-        for (int i = 0; i < runs.size(); i++) {
-            BufferedReader br = new BufferedReader(new FileReader(runs.get(0)));
-            for (String document; (document = br.readLine()) != null; ) {
-                System.out.println(document);
-                ArrayList<String> tokens = new ArrayList<>(Arrays.asList(document.split(" ")));
-                int topicId = Integer.parseInt(tokens.get(0));
-                String documentID = tokens.get(2);
-                int relevance = Integer.parseInt(tokens.get(3));
+        BufferedReader br = new BufferedReader(new FileReader(qrelsFilePath));
+        for (String document; (document = br.readLine()) != null; ) {
+            System.out.println(document);
+            ArrayList<String> tokens = new ArrayList<>(Arrays.asList(document.split(" ")));
+            int topicId = Integer.parseInt(tokens.get(0));
+            String documentID = tokens.get(2);
+            int relevance = Integer.parseInt(tokens.get(3));
 
-                try {
-                    Analyzer analyzer = new WhitespaceAnalyzer();
-                    System.out.printf("Searching for topic %s.%n", topicId);
+            try {
+                Analyzer analyzer = new WhitespaceAnalyzer();
+                System.out.printf("Searching for topic %s.%n", topicId);
 
-                    BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
-                    QueryParser queryParser = new QueryParser("id", analyzer);
+                BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
+                QueryParser queryParser = new QueryParser("id", analyzer);
 
-                    queryBuilder.add(queryParser.parse(QueryParserBase.escape(String.valueOf(documentID))), BooleanClause.Occur.MUST);
+                queryBuilder.add(queryParser.parse(QueryParserBase.escape(String.valueOf(documentID))), BooleanClause.Occur.MUST);
 
-                    BooleanQuery query = queryBuilder.build();
-                    IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("experiment/index")));
-                    IndexSearcher searcher = new IndexSearcher(reader);
+                BooleanQuery query = queryBuilder.build();
+                IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexDirectoryPath)));
+                IndexSearcher searcher = new IndexSearcher(reader);
 
-                    TopDocs topDocsObject = searcher.search(query, 1);
+                TopDocs topDocsObject = searcher.search(query, 1);
 
-                    ScoreDoc[] topDocs = topDocsObject.scoreDocs;
-                    int doc;
-                    if (topDocs[0] != null)
-                        doc = topDocs[0].doc;
-                    else continue;
+                ScoreDoc[] topDocs = topDocsObject.scoreDocs;
+                int doc;
+                if (topDocs[0] != null)
+                    doc = topDocs[0].doc;
+                else continue;
 
 
-                    Terms termVector = reader.getTermVector(doc, "contents");
-                    TermsEnum iterator = termVector.iterator();
-                    BytesRef term;
-                    PostingsEnum postings = null;
-                    while ((term = iterator.next()) != null) {
-                        String termText = term.utf8ToString();
-                        postings = iterator.postings(postings, PostingsEnum.FREQS);
-                        postings.nextDoc();
-                        int freq = postings.freq();
-                        topicsRfs.get(topicId).get(relevance).put(termText, freq);
-                    }
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                Terms termVector = reader.getTermVector(doc, "contents");
+                TermsEnum iterator = termVector.iterator();
+                BytesRef term;
+                PostingsEnum postings = null;
+                while ((term = iterator.next()) != null) {
+                    String termText = term.utf8ToString();
+                    postings = iterator.postings(postings, PostingsEnum.FREQS);
+                    postings.nextDoc();
+                    int freq = postings.freq();
+                    topicsRfs.get(topicId).get(relevance).put(termText, freq);
                 }
-            }
 
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
+
 
         return topicsRfs;
     }

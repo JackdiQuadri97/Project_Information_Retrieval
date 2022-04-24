@@ -1,22 +1,30 @@
 package it.unipd.dei.se.rrf;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class RRF {
-    public static void main(String[] args) {
-        List<String> argsList = new ArrayList<>(Arrays.asList(args));
+    public static void main(String[] args) throws IOException {
+        doSearch(null, null);
+    }
+
+    public static void doSearch(String documentDirectoryPath, String runId) throws IOException {
+        List<String> runs = Files.walk(Paths.get(documentDirectoryPath))
+                //use to string here, otherwise checking for path segments
+                .filter(p -> p.toString().endsWith(".txt"))
+                .map(Path::toString)
+                .collect(Collectors.toList());
 
         int k = 30;
         List<Map<String, Double>> rrfs = new ArrayList<>();
         for (int i = 0; i < 101; i++)
             rrfs.add(new HashMap<>());
 
-        argsList.add("experiment/seupd2122-kueri.txt");
-        argsList.add("experiment/seupd2122-kueri2.txt");
-
-        argsList.forEach(run -> {
+        runs.forEach(run -> {
             try (BufferedReader br = new BufferedReader(new FileReader(run))) {
                 for (String document; (document = br.readLine()) != null; ) {
                     System.out.println(document);
@@ -42,7 +50,7 @@ public class RRF {
             ofTopic.sort(new CustomComparator());
         }
 
-        String outPath = String.format("experiment/%s", String.join("_", argsList.stream().map(path -> path.split("/")[1].replace(".txt", "")).collect(Collectors.toList())));
+        String outPath = String.format("runs/rrf_%s.txt", String.join("_", runs.stream().map(path -> path.split("\\\\")[1].replace(".txt", "")).collect(Collectors.toList())));
         try (Writer output = new BufferedWriter(new FileWriter(outPath))) {
             for (int i = 0; i < scores.size(); i++) {
                 List<KeyScorePair> score = scores.get(i);
@@ -53,7 +61,7 @@ public class RRF {
                                     score.get(j).getKey(),
                                     j + 1,
                                     score.get(j).getScore(),
-                                    "RRF-kueri-2122"));
+                                    runId));
                 }
             }
 
