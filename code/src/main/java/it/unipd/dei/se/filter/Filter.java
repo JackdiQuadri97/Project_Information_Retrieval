@@ -27,7 +27,7 @@ public class Filter {
         List<String> tokens = getTokensWithCollection(s);
         for (String token : tokens) {
             TermQuery tokenQuery = new TermQuery(new Term(token, token));
-            booleanQuery = new BooleanQuery.Builder().add(new BooleanClause(tokenQuery, BooleanClause.Occur.MUST)).build();
+            booleanQuery = new BooleanQuery.Builder().add(new BooleanClause(tokenQuery, BooleanClause.Occur.SHOULD)).build();
         }
         return booleanQuery;
     }
