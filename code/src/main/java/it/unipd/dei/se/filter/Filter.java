@@ -13,21 +13,21 @@ import java.util.stream.Collectors;
 public class Filter {
 
     public static BooleanQuery.Builder filterAnd(String s) {
-        BooleanQuery.Builder booleanQuery = null;
+        BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
         List<String> tokens = getTokensWithCollection(s);
         for (String token : tokens) {
             TermQuery tokenQuery = new TermQuery(new Term(token, token));
-            booleanQuery = new BooleanQuery.Builder().add(new BooleanClause(tokenQuery, BooleanClause.Occur.MUST));
+            booleanQuery.add(new BooleanClause(tokenQuery, BooleanClause.Occur.MUST));
         }
         return booleanQuery;
     }
 
     public static BooleanQuery.Builder filterOr(String s) {
-        BooleanQuery.Builder booleanQuery = null;
+        BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
         List<String> tokens = getTokensWithCollection(s);
         for (String token : tokens) {
             TermQuery tokenQuery = new TermQuery(new Term(token, token));
-            booleanQuery = new BooleanQuery.Builder().add(new BooleanClause(tokenQuery, BooleanClause.Occur.SHOULD));
+            booleanQuery.add(new BooleanClause(tokenQuery, BooleanClause.Occur.SHOULD));
         }
         return booleanQuery;
     }
