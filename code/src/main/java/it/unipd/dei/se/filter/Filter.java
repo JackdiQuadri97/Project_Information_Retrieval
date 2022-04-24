@@ -33,6 +33,7 @@ public class Filter {
     }
 
     public static List<String> getTokensWithCollection(String str) {
+        str = str.replaceAll(",", "");
         return Collections.list(new StringTokenizer(str, " ")).stream()
                 .map(token -> (String) token)
                 .collect(Collectors.toList());
