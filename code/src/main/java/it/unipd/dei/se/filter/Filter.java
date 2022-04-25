@@ -1,9 +1,10 @@
 package it.unipd.dei.se.filter;
 
-import org.apache.lucene.index.Term;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.queryparser.classic.QueryParserBase;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.TermQuery;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,23 +12,28 @@ import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 public class Filter {
-
-    public static BooleanQuery.Builder filterAnd(String s) {
+    public static BooleanQuery.Builder filterAnd(String s, QueryParser queryParser) {
         BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
         List<String> tokens = getTokensWithCollection(s);
         for (String token : tokens) {
-            TermQuery tokenQuery = new TermQuery(new Term(token, token));
-            booleanQuery.add(new BooleanClause(tokenQuery, BooleanClause.Occur.MUST));
+            try {
+                booleanQuery.add(queryParser.parse(QueryParserBase.escape(token)), BooleanClause.Occur.MUST);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         return booleanQuery;
     }
 
-    public static BooleanQuery.Builder filterOr(String s) {
+    public static BooleanQuery.Builder filterOr(String s, QueryParser queryParser) {
         BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
         List<String> tokens = getTokensWithCollection(s);
         for (String token : tokens) {
-            TermQuery tokenQuery = new TermQuery(new Term(token, token));
-            booleanQuery.add(new BooleanClause(tokenQuery, BooleanClause.Occur.SHOULD));
+            try {
+                booleanQuery.add(queryParser.parse(QueryParserBase.escape(token)), BooleanClause.Occur.SHOULD);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         return booleanQuery;
     }

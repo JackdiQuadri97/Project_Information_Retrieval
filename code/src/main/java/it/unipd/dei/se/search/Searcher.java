@@ -350,7 +350,8 @@ public class Searcher {
                 queryBuilder = new BooleanQuery.Builder();
 
                 if (filter)
-                    queryBuilder = Filter.filterAnd(topic.getObjects());
+
+                    queryBuilder = Filter.filterAnd(topic.getObjects(), queryParser);
 
                 // define the terms to put in the query and if they SHOULD or MUST be present
                 queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getTitle())), BooleanClause.Occur.SHOULD);
