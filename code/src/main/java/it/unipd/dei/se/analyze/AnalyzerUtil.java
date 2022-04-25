@@ -51,6 +51,7 @@ public class AnalyzerUtil {
      *
      * @param a the analyzer to use.
      * @param t the text to process.
+     *
      * @throws IOException if something goes wrong while processing the text.
      */
     static void consumeTokenStream(final Analyzer a, final String t) throws IOException {
@@ -124,10 +125,12 @@ public class AnalyzerUtil {
      * Loads the required stop list among those available in the {@code resources} folder.
      *
      * @param stopFile the name of the file containing the stop list.
+     *
      * @return the stop list
+     *
      * @throws IllegalStateException if there is any issue while loading the stop list.
      */
-    public static CharArraySet loadStopList(final String stopFile) {
+    static CharArraySet loadStopList(final String stopFile) {
 
         if (stopFile == null) {
             throw new NullPointerException("Stop list file name cannot be null.");
@@ -165,7 +168,9 @@ public class AnalyzerUtil {
      * Loads the required Apache OpenNLP POS tagger model among those available in the {@code resources} folder.
      *
      * @param modelFile the name of the file containing the model.
+     *
      * @return the required Apache OpenNLP model.
+     *
      * @throws IllegalStateException if there is any issue while loading the model.
      */
     static NLPPOSTaggerOp loadPosTaggerModel(final String modelFile) {
@@ -204,7 +209,9 @@ public class AnalyzerUtil {
      * Loads the required Apache OpenNLP sentence detector model among those available in the {@code resources} folder.
      *
      * @param modelFile the name of the file containing the model.
+     *
      * @return the required Apache OpenNLP model.
+     *
      * @throws IllegalStateException if there is any issue while loading the model.
      */
     static NLPSentenceDetectorOp loadSentenceDetectorModel(final String modelFile) {
@@ -243,7 +250,9 @@ public class AnalyzerUtil {
      * Loads the required Apache OpenNLP tokenizer model among those available in the {@code resources} folder.
      *
      * @param modelFile the name of the file containing the model.
+     *
      * @return the required Apache OpenNLP model.
+     *
      * @throws IllegalStateException if there is any issue while loading the model.
      */
     static NLPTokenizerOp loadTokenizerModel(final String modelFile) {
@@ -282,7 +291,9 @@ public class AnalyzerUtil {
      * Loads the required Apache OpenNLP lemmatizer model among those available in the {@code resources} folder.
      *
      * @param modelFile the name of the file containing the model.
+     *
      * @return the required Apache OpenNLP model.
+     *
      * @throws IllegalStateException if there is any issue while loading the model.
      */
     static NLPLemmatizerOp loadLemmatizerModel(final String modelFile) {
@@ -321,7 +332,9 @@ public class AnalyzerUtil {
      * Loads the required Apache OpenNLP NER tagger model among those available in the {@code resources} folder.
      *
      * @param modelFile the name of the file containing the model.
+     *
      * @return the required Apache OpenNLP model.
+     *
      * @throws IllegalStateException if there is any issue while loading the model.
      */
     static NLPNERTaggerOp loadLNerTaggerModel(final String modelFile) {
@@ -355,4 +368,38 @@ public class AnalyzerUtil {
 
         return model;
     }
+    static CharArraySet loadSynonymsList(final String SynonymsFile) {
+
+        if (SynonymsFile == null) {
+            throw new NullPointerException("Synonym list file name cannot be null.");
+        }
+
+        if (SynonymsFile.isEmpty()) {
+            throw new IllegalArgumentException("Synonym list file name cannot be empty.");
+        }
+
+        System.out.println(SynonymsFile);
+
+        // the synonym list
+        CharArraySet synonymsList = null;
+
+        try {
+
+            // Get a reader for the file containing the synonym list
+            Reader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(AnalyzerUtil.class.getClassLoader().getResourceAsStream(SynonymsFile))));
+
+            // Read the synonym list
+            synonymsList = WordlistLoader.getWordSet(in);
+
+            // Close the file
+            in.close();
+
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    String.format("Unable to load the stop list %s: %s", SynonymsFile, e.getMessage()), e);
+        }
+
+        return synonymsList;
+    }
 }
+

@@ -22,17 +22,35 @@ public class MainAnalyzer extends Analyzer {
     @Override
     protected TokenStreamComponents createComponents(String fieldName) {
 
+        String stopListCustom=null;
+        String StandardStopListName="lucene.txt";
+        String synonymsListCustom=null;
+        String StandardSynonymsListName="adj.exc";
+
         final Tokenizer source = new StandardTokenizer();
 
         TokenStream tokens = new LowerCaseFilter(source);
 
         tokens = new EnglishPossessiveFilter(tokens);
         tokens = new MultipleCharsFilter(tokens);
-
         tokens = new StopFilter(tokens, AnalyzerUtil.loadStopList("atire.text"));
+
+
+        //loading stopList  file
+        if (stopListCustom!=null && !stopListCustom.isEmpty())
+            tokens = new StopFilter(tokens, AnalyzerUtil.loadStopList(stopListCustom));
+        else
+            tokens = new StopFilter(tokens, AnalyzerUtil.loadStopList(StandardStopListName));
+        //loading SynonymsFile file
+        if (synonymsListCustom!=null && !synonymsListCustom.isEmpty())
+            tokens = new StopFilter(tokens, AnalyzerUtil.loadSynonymsList(synonymsListCustom));
+        else
+            tokens = new StopFilter(tokens, AnalyzerUtil.loadSynonymsList(StandardSynonymsListName));
+
 
         return new TokenStreamComponents(source, tokens);
     }
+
 
     @Override
     protected Reader initReader(String fieldName, Reader reader) {
@@ -50,6 +68,7 @@ public class MainAnalyzer extends Analyzer {
      * Main method of the class.
      *
      * @param args command line arguments.
+     *
      * @throws IOException if something goes wrong while processing the text.
      */
     public static void main(String[] args) throws IOException {
