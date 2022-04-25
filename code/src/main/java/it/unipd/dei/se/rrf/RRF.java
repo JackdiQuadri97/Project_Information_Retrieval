@@ -50,7 +50,8 @@ public class RRF {
             ofTopic.sort(new CustomComparator());
         }
 
-        String outPath = String.format("runs/rrf_%s.txt", String.join("_", runs.stream().map(path -> path.split("\\\\")[1].replace(".txt", "")).collect(Collectors.toList())));
+        //String outPath = String.format("runs/rrf_%s.txt", String.join("_", runs.stream().map(path -> path.split("\\\\")[1].replace(".txt", "")).collect(Collectors.toList())));
+        String outPath = String.format("runs/rrf.txt");
         try (Writer output = new BufferedWriter(new FileWriter(outPath))) {
             for (int i = 0; i < scores.size(); i++) {
                 List<KeyScorePair> score = scores.get(i);
