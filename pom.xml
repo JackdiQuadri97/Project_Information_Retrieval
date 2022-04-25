@@ -147,6 +147,15 @@
     <!-- Dependencies -->
     <dependencies>
         <dependency>
+            <groupId>com.ibm.hrl.debater</groupId>
+            <artifactId>debater</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/java_api.jar</systemPath>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
             <version>${lucene.version}</version>

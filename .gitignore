@@ -69,3 +69,6 @@ tomcat-logs/
 
 # OSX
 .DS_Store
+
+# secrets
+secrets/
