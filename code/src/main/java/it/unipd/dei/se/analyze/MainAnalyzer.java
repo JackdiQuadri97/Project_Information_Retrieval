@@ -33,7 +33,6 @@ public class MainAnalyzer extends Analyzer {
 
         tokens = new EnglishPossessiveFilter(tokens);
         tokens = new MultipleCharsFilter(tokens);
-        tokens = new StopFilter(tokens, AnalyzerUtil.loadStopList("atire.text"));
 
 
         //loading stopList  file
