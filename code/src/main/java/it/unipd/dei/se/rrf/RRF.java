@@ -54,7 +54,7 @@ public class RRF {
         try (Writer output = new BufferedWriter(new FileWriter(outPath))) {
             for (int i = 0; i < scores.size(); i++) {
                 List<KeyScorePair> score = scores.get(i);
-                for (int j = 0; j < score.size(); j++) {
+                for (int j = 0; j < score.size() && j < 1000; j++) {
                     output.append(
                             String.format(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n",
                                     i,
