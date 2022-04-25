@@ -65,7 +65,7 @@ public class Run {
         }
     }
 
-    private static void doSearch(String indexDirectoryPath, String runId, String runDirectoryPath, String stopWordsFilePath, String synonymsListFilePath, boolean synonyms, boolean filter, Similarity similarity) {
+    private static void doSearch(String indexDirectoryPath, String runId, String runDirectoryPath, String stopWordsFilePath, String synonymsListFilePath, boolean filter, boolean synonyms, Similarity similarity) {
         try {
             Searcher.doSearch(indexDirectoryPath, runId, runDirectoryPath, stopWordsFilePath, synonymsListFilePath, filter, similarity, synonyms);
         } catch (Exception e) {
