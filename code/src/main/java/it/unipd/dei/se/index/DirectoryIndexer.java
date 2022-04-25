@@ -237,10 +237,10 @@ public class DirectoryIndexer {
      */
 
     public static void main(String[] args) throws Exception {
-        doIndex("experiment/index", new BM25Similarity(), "lucene.txt", "adj.exc");
+        doIndex("experiment/index", new BM25Similarity(), "lucene.txt", "adj.exc", false);
     }
 
-    public static void doIndex(@NotNull String indexPath, @NotNull Similarity similarity, @NotNull String stopWordsFilePath, @NotNull String synonymsFilePath) throws IOException {
+    public static void doIndex(@NotNull String indexPath, @NotNull Similarity similarity, @NotNull String stopWordsFilePath, @NotNull String synonymsFilePath, boolean synonyms) throws IOException {
         final int ramBuffer = 256;
         // final String docsPath = "C:\\Users\\ivanp\\Desktop\\datasets\\touche2022\\touche-task2-expandend_reduced";
         final String docsPath = "code/src/main/resource/corpus_folder";
@@ -249,14 +249,16 @@ public class DirectoryIndexer {
         final int expectedDocs = 1;
         final String charsetName = "ISO-8859-1";
 
-        final Analyzer a = CustomAnalyzer.builder(Path.of("code/src/main/resource")).withTokenizer(StandardTokenizerFactory.class)
+        final CustomAnalyzer.Builder builder = CustomAnalyzer.builder(Path.of("code/src/main/resource")).withTokenizer(StandardTokenizerFactory.class)
                 .addTokenFilter(LowerCaseFilterFactory.class)
                 .addTokenFilter("stop",
                         "ignoreCase", "true",
                         "words", stopWordsFilePath,
-                        "format", "wordset")
-                .addTokenFilter(SynonymGraphFilterFactory.class, "synonyms", synonymsFilePath)
-                .build();
+                        "format", "wordset");
+        if (synonyms)
+            builder.addTokenFilter(SynonymGraphFilterFactory.class, "synonyms", synonymsFilePath);
+
+        final Analyzer a = builder.build();
 
         DirectoryIndexer i = new DirectoryIndexer(a, similarity, ramBuffer, indexPath, docsPath, extension,
                 charsetName, expectedDocs, Parser.class);

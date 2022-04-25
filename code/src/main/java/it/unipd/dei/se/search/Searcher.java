@@ -292,23 +292,25 @@ public class Searcher {
      */
     public static void main(String[] args) throws Exception {
 
-        doSearch("experiment/index", "seupd2122-kueri", "runs", "lucene.txt", "dictionary/adj.exc", false, new BM25Similarity());
+        doSearch("experiment/index", "seupd2122-kueri", "runs", "lucene.txt", "dictionary/adj.exc", false, new BM25Similarity(), false);
 
     }
 
-    public static void doSearch(@NotNull String indexPath, @NotNull String runID, String runPath, String stopWordsFilePath, String synonymsFilePath, boolean filter, @Nullable Similarity similarity) throws IOException, ParseException {
+    public static void doSearch(@NotNull String indexPath, @NotNull String runID, String runPath, String stopWordsFilePath, String synonymsFilePath, boolean filter, @Nullable Similarity similarity, boolean synonyms) throws IOException, ParseException {
         final String topics = "code/src/main/resource/topics-task2.xml";
 
         final int maxDocsRetrieved = 1000;
 
-        final Analyzer analyzer = CustomAnalyzer.builder(Path.of("code/src/main/resource")).withTokenizer(StandardTokenizerFactory.class)
+        final CustomAnalyzer.Builder builder = CustomAnalyzer.builder(Path.of("code/src/main/resource")).withTokenizer(StandardTokenizerFactory.class)
                 .addTokenFilter(LowerCaseFilterFactory.class)
                 .addTokenFilter("stop",
                         "ignoreCase", "true",
                         "words", stopWordsFilePath,
-                        "format", "wordset")
-                .addTokenFilter(SynonymGraphFilterFactory.class, "synonyms", synonymsFilePath)
-                .build();
+                        "format", "wordset");
+        if (synonyms)
+            builder.addTokenFilter(SynonymGraphFilterFactory.class, "synonyms", synonymsFilePath);
+
+        final Analyzer analyzer = builder.build();
 
         HashMap<String, Float> weights = new HashMap<>();
         weights.put(ParsedDocument.FIELDS.CONTENTS, 1.0F);

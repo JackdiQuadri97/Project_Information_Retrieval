@@ -18,10 +18,11 @@ public class Run {
         String stopListFilePath = args.length > 2 ? args[2] : "atire.txt";
         String synonymsListFilePath = args.length > 3 ? args[3] : "dictionary/adj.exc";
         boolean filter = args.length > 4 && Boolean.parseBoolean(args[4]);
-        String matching = args.length > 5 ? args[5] : "bm25";
-        String runId = args.length > 6 ? args[6] : "seupd2122-kueri";
-        String runDirectoryPath = args.length > 7 ? args[7] : "runs";
-        String qrelFilePath = args.length > 8 ? args[8] : "code/src/main/resource/qrels/example.txt";
+        boolean synonyms = args.length > 5 && Boolean.parseBoolean(args[5]);
+        String matching = args.length > 6 ? args[6] : "bm25";
+        String runId = args.length > 7 ? args[7] : "seupd2122-kueri";
+        String runDirectoryPath = args.length > 8 ? args[8] : "runs";
+        String qrelFilePath = args.length > 9 ? args[9] : "code/src/main/resource/qrels/example.txt";
 
 
         Similarity similarity = null;
@@ -42,10 +43,10 @@ public class Run {
 
         switch (task) {
             case "index":
-                doIndex(indexDirectoryPath, stopListFilePath, synonymsListFilePath, similarity);
+                doIndex(indexDirectoryPath, stopListFilePath, synonymsListFilePath, similarity, synonyms);
                 break;
             case "search":
-                doSearch(indexDirectoryPath, runId, runDirectoryPath, stopListFilePath, synonymsListFilePath, filter, similarity);
+                doSearch(indexDirectoryPath, runId, runDirectoryPath, stopListFilePath, synonymsListFilePath, filter, synonyms, similarity);
                 break;
             case "rf":
                 doRFSearch(indexDirectoryPath, runId, runDirectoryPath, qrelFilePath);
@@ -56,17 +57,17 @@ public class Run {
         }
     }
 
-    private static void doIndex(String indexDirectoryPath, String stopListFilePath, String synonymsListFilePath, Similarity similarity) {
+    private static void doIndex(String indexDirectoryPath, String stopListFilePath, String synonymsListFilePath, Similarity similarity, boolean synonyms) {
         try {
-            DirectoryIndexer.doIndex(indexDirectoryPath, similarity, stopListFilePath, synonymsListFilePath);
+            DirectoryIndexer.doIndex(indexDirectoryPath, similarity, stopListFilePath, synonymsListFilePath, synonyms);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void doSearch(String indexDirectoryPath, String runId, String runDirectoryPath, String stopWordsFilePath, String synonymsListFilePath, boolean filter, Similarity similarity) {
+    private static void doSearch(String indexDirectoryPath, String runId, String runDirectoryPath, String stopWordsFilePath, String synonymsListFilePath, boolean synonyms, boolean filter, Similarity similarity) {
         try {
-            Searcher.doSearch(indexDirectoryPath, runId, runDirectoryPath, stopWordsFilePath, synonymsListFilePath, filter, similarity);
+            Searcher.doSearch(indexDirectoryPath, runId, runDirectoryPath, stopWordsFilePath, synonymsListFilePath, filter, similarity, synonyms);
         } catch (Exception e) {
             e.printStackTrace();
         }
