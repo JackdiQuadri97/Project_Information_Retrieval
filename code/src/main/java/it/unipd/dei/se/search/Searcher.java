@@ -317,7 +317,7 @@ public class Searcher {
         weights.put(ParsedDocument.FIELDS.DOC_T5_QUERY, 1.0F);
         // weights.put("sas", 1.0F);
         Searcher s = new Searcher(analyzer, similarity, indexPath, topics,
-                50, runID + "_" + stopWordsFilePath.split("\\.")[0] + "_" + similarity.toString().split(" ")[0] + "_" + filter, runPath, maxDocsRetrieved, weights);
+                50, runID + "_" + stopWordsFilePath.split("\\.")[0] + "_" + similarity.toString().split(" ")[0] + "_" + filter + "_" + synonyms, runPath, maxDocsRetrieved, weights);
 
         s.search(filter, stopWordsFilePath, similarity.toString());
     }
