@@ -11,6 +11,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.apache.lucene.analysis.synonym.SynonymGraphFilterFactory;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
@@ -291,11 +292,11 @@ public class Searcher {
      */
     public static void main(String[] args) throws Exception {
 
-        doSearch(args[0], args[1], args[2], args[4], Boolean.parseBoolean(args[3]), new BM25Similarity());
+        doSearch("experiment/index", "seupd2122-kueri", "runs", "lucene.txt", "dictionary/adj.exc", false, new BM25Similarity());
 
     }
 
-    public static void doSearch(@NotNull String indexPath, @NotNull String runID, String runPath, String stopWordsFilePath, boolean filter, @Nullable Similarity similarity) throws IOException, ParseException {
+    public static void doSearch(@NotNull String indexPath, @NotNull String runID, String runPath, String stopWordsFilePath, String synonymsFilePath, boolean filter, @Nullable Similarity similarity) throws IOException, ParseException {
         final String topics = "code/src/main/resource/topics-task2.xml";
 
         final int maxDocsRetrieved = 1000;
@@ -305,7 +306,9 @@ public class Searcher {
                 .addTokenFilter("stop",
                         "ignoreCase", "true",
                         "words", stopWordsFilePath,
-                        "format", "wordset").build();
+                        "format", "wordset")
+                .addTokenFilter(SynonymGraphFilterFactory.class, "synonyms", synonymsFilePath)
+                .build();
 
         HashMap<String, Float> weights = new HashMap<>();
         weights.put(ParsedDocument.FIELDS.CONTENTS, 1.0F);

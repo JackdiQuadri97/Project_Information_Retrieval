@@ -9,11 +9,13 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.apache.lucene.analysis.synonym.SynonymGraphFilterFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
 
@@ -235,10 +237,10 @@ public class DirectoryIndexer {
      */
 
     public static void main(String[] args) throws Exception {
-        doIndex(args[0], null, null);
+        doIndex("experiment/index", new BM25Similarity(), "lucene.txt", "adj.exc");
     }
 
-    public static void doIndex(@NotNull String indexPath, @NotNull Similarity similarity, @NotNull String stopWordsFilePath) throws IOException {
+    public static void doIndex(@NotNull String indexPath, @NotNull Similarity similarity, @NotNull String stopWordsFilePath, @NotNull String synonymsFilePath) throws IOException {
         final int ramBuffer = 256;
         // final String docsPath = "C:\\Users\\ivanp\\Desktop\\datasets\\touche2022\\touche-task2-expandend_reduced";
         final String docsPath = "code/src/main/resource/corpus_folder";
@@ -253,6 +255,7 @@ public class DirectoryIndexer {
                         "ignoreCase", "true",
                         "words", stopWordsFilePath,
                         "format", "wordset")
+                .addTokenFilter(SynonymGraphFilterFactory.class, "synonyms", synonymsFilePath)
                 .build();
 
         DirectoryIndexer i = new DirectoryIndexer(a, similarity, ramBuffer, indexPath, docsPath, extension,
