@@ -28,7 +28,7 @@ public class BodyField extends Field {
         //tokenized
         BODY_TYPE.setTokenized(true);
         //do not store in memory
-        BODY_TYPE.setStored(false);
+        BODY_TYPE.setStored(true);
         //storing termvectors
         BODY_TYPE.setStoreTermVectors(true);
     }
@@ -52,5 +52,4 @@ public class BodyField extends Field {
     public BodyField(final String value) {
         super(ParsedDocument.FIELDS.CONTENTS, value, BODY_TYPE);
     }
-
 }
