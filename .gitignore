@@ -72,3 +72,5 @@ tomcat-logs/
 
 # secrets
 secrets/
+
+code/src/main/resource/corpus_folder/passages.jsonl
