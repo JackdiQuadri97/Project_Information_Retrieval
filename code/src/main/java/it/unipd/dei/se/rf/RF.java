@@ -38,6 +38,7 @@ public class RF {
         final Set<String> idField = new HashSet<>();
         idField.add(ParsedDocument.FIELDS.ID);
 
+        BooleanQuery.setMaxClauseCount(16384);
         BooleanQuery.Builder queryBuilder;
         Query query;
         TopDocs topDocsObject;
@@ -58,7 +59,7 @@ public class RF {
                 Analyzer analyzer = new StandardAnalyzer();
                 QueryParser queryParser = new QueryParser("contents", analyzer);
 
-                for (int j = 0; j < topicRelevance.size(); j++) {
+                for (int j = 1; j < topicRelevance.size(); j++) {
                     Map<String, Integer> frequencies = topicRelevance.get(j);
                     for (String key : frequencies.keySet()) {
                         queryBuilder.add(queryParser.parse(key + "^" + (frequencies.get(key) * Math.pow(j, 2))), BooleanClause.Occur.SHOULD);
