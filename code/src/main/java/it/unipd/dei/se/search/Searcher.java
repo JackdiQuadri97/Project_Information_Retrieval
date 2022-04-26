@@ -11,7 +11,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
-import org.apache.lucene.analysis.synonym.SynonymGraphFilterFactory;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
@@ -24,7 +23,9 @@ import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
 
 import javax.validation.constraints.NotNull;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -292,45 +293,34 @@ public class Searcher {
      */
     public static void main(String[] args) throws Exception {
 
-        doSearch("experiment/index", "seupd2122-kueri", "runs", "lucene.txt", "dictionary/adj.exc", false, new BM25Similarity(), false);
+        doSearch("experiment/index", "seupd2122-kueri", "runs", "lucene.txt", false, new BM25Similarity());
 
     }
 
-    public static void doSearch(@NotNull String indexPath, @NotNull String runID, String runPath, String stopWordsFilePath, String synonymsFilePath, boolean filter, @Nullable Similarity similarity, boolean synonyms) throws IOException, ParseException {
+    public static void doSearch(@NotNull String indexPath, @NotNull String runID, String runPath, String stopWordsFilePath, boolean filter, @Nullable Similarity similarity) throws IOException, ParseException {
         final String topics = "code/src/main/resource/topics-task2.xml";
 
         final int maxDocsRetrieved = 1000;
 
-        final CustomAnalyzer.Builder builder = CustomAnalyzer.builder(Path.of("code/src/main/resource")).withTokenizer(StandardTokenizerFactory.class)
+        final Analyzer analyzer = CustomAnalyzer.builder(Path.of("code/src/main/resource")).withTokenizer(StandardTokenizerFactory.class)
                 .addTokenFilter(LowerCaseFilterFactory.class)
                 .addTokenFilter("stop",
                         "ignoreCase", "true",
                         "words", stopWordsFilePath,
-                        "format", "wordset");
-        if (synonyms)
-            builder.addTokenFilter(SynonymGraphFilterFactory.class, "synonyms", synonymsFilePath);
-
-        final Analyzer analyzer = builder.build();
+                        "format", "wordset")
+                .build();
 
         HashMap<String, Float> weights = new HashMap<>();
         weights.put(ParsedDocument.FIELDS.CONTENTS, 1.0F);
         weights.put(ParsedDocument.FIELDS.DOC_T5_QUERY, 1.0F);
         // weights.put("sas", 1.0F);
         Searcher s = new Searcher(analyzer, similarity, indexPath, topics,
-                50, runID + "_" + stopWordsFilePath.split("\\.")[0] + "_" + similarity.toString().split(" ")[0] + "_" + filter + "_" + synonyms, runPath, maxDocsRetrieved, weights);
+                50, runID + "_" + stopWordsFilePath.split("\\.")[0] + "_" + similarity.toString().split(" ")[0] + "_" + filter, runPath, maxDocsRetrieved, weights);
 
-        s.search(filter, stopWordsFilePath, similarity.toString());
+        s.search(filter);
     }
 
-    /**
-     * /** Searches for the specified topics.
-     *
-     * @param filter
-     * @param stopWordsFilePath
-     * @throws IOException    if something goes wrong while searching.
-     * @throws ParseException if something goes wrong while parsing topics.
-     */
-    public void search(boolean filter, String stopWordsFilePath, String similarity) throws IOException, ParseException {
+    public void search(boolean filter) throws IOException, ParseException {
 
         System.out.printf("%n#### Start searching ####%n");
 
@@ -339,12 +329,12 @@ public class Searcher {
         final Set<String> idField = new HashSet<>();
         idField.add(ParsedDocument.FIELDS.ID);
 
-        BooleanQuery.Builder queryBuilder = null;
-        Query query = null;
-        TopDocs topDocsObject = null;
-        ScoreDoc[] topDocs = null;
-        String docID = null;
-        Writer output = new BufferedWriter(new FileWriter(runID));  //clears file every time
+        BooleanQuery.Builder queryBuilder;
+        Query query;
+        TopDocs topDocsObject;
+        ScoreDoc[] topDocs;
+        String docID;
+        //clears file every time
 
         try {
             // SEARCHING
@@ -360,9 +350,6 @@ public class Searcher {
 
                 // define the terms to put in the query and if they SHOULD or MUST be present
                 queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getTitle())), BooleanClause.Occur.SHOULD);
-                /*queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getDescription())),
-                        BooleanClause.Occur.SHOULD);
-                queryBuilder.add(queryParser.parse(QueryParserBase.escape(topic.getObjects())), BooleanClause.Occur.SHOULD);*/
 
                 query = queryBuilder.build();
 

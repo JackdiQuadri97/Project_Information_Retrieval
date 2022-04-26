@@ -9,7 +9,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
-import org.apache.lucene.analysis.synonym.SynonymGraphFilterFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -146,19 +145,19 @@ public class DirectoryIndexer {
                 Files.createDirectories(indexDir);
             } catch (Exception e) {
                 throw new IllegalArgumentException(
-                        String.format("Unable to create directory %s: %s.", indexDir.toAbsolutePath().toString(),
+                        String.format("Unable to create directory %s: %s.", indexDir.toAbsolutePath(),
                                 e.getMessage()), e);
             }
         }
 
         if (!Files.isWritable(indexDir)) {
             throw new IllegalArgumentException(
-                    String.format("Index directory %s cannot be written.", indexDir.toAbsolutePath().toString()));
+                    String.format("Index directory %s cannot be written.", indexDir.toAbsolutePath()));
         }
 
         if (!Files.isDirectory(indexDir)) {
             throw new IllegalArgumentException(String.format("%s expected to be a directory where to write the index.",
-                    indexDir.toAbsolutePath().toString()));
+                    indexDir.toAbsolutePath()));
         }
 
         if (docsPath == null) {
@@ -172,12 +171,12 @@ public class DirectoryIndexer {
         final Path docsDir = Paths.get(docsPath);
         if (!Files.isReadable(docsDir)) {
             throw new IllegalArgumentException(
-                    String.format("Documents directory %s cannot be read.", docsDir.toAbsolutePath().toString()));
+                    String.format("Documents directory %s cannot be read.", docsDir.toAbsolutePath()));
         }
 
         if (!Files.isDirectory(docsDir)) {
             throw new IllegalArgumentException(
-                    String.format("%s expected to be a directory of documents.", docsDir.toAbsolutePath().toString()));
+                    String.format("%s expected to be a directory of documents.", docsDir.toAbsolutePath()));
         }
 
         this.docsDir = docsDir;
@@ -222,7 +221,7 @@ public class DirectoryIndexer {
             writer = new IndexWriter(FSDirectory.open(indexDir), iwc);
         } catch (IOException e) {
             throw new IllegalArgumentException(String.format("Unable to create the index writer in directory %s: %s.",
-                    indexDir.toAbsolutePath().toString(), e.getMessage()), e);
+                    indexDir.toAbsolutePath(), e.getMessage()), e);
         }
 
         this.start = System.currentTimeMillis();
@@ -237,10 +236,10 @@ public class DirectoryIndexer {
      */
 
     public static void main(String[] args) throws Exception {
-        doIndex("experiment/index", new BM25Similarity(), "lucene.txt", "adj.exc", false);
+        doIndex("experiment/index", new BM25Similarity(), "lucene.txt");
     }
 
-    public static void doIndex(@NotNull String indexPath, @NotNull Similarity similarity, @NotNull String stopWordsFilePath, @NotNull String synonymsFilePath, boolean synonyms) throws IOException {
+    public static void doIndex(@NotNull String indexPath, @NotNull Similarity similarity, @NotNull String stopWordsFilePath) throws IOException {
         final int ramBuffer = 256;
         // final String docsPath = "C:\\Users\\ivanp\\Desktop\\datasets\\touche2022\\touche-task2-expandend_reduced";
         final String docsPath = "code/src/main/resource/corpus_folder";
@@ -249,16 +248,13 @@ public class DirectoryIndexer {
         final int expectedDocs = 1;
         final String charsetName = "ISO-8859-1";
 
-        final CustomAnalyzer.Builder builder = CustomAnalyzer.builder(Path.of("code/src/main/resource")).withTokenizer(StandardTokenizerFactory.class)
+        final Analyzer a = CustomAnalyzer.builder(Path.of("code/src/main/resource")).withTokenizer(StandardTokenizerFactory.class)
                 .addTokenFilter(LowerCaseFilterFactory.class)
                 .addTokenFilter("stop",
                         "ignoreCase", "true",
                         "words", stopWordsFilePath,
-                        "format", "wordset");
-        if (synonyms)
-            builder.addTokenFilter(SynonymGraphFilterFactory.class, "synonyms", synonymsFilePath);
-
-        final Analyzer a = builder.build();
+                        "format", "wordset")
+                .build();
 
         DirectoryIndexer i = new DirectoryIndexer(a, similarity, ramBuffer, indexPath, docsPath, extension,
                 charsetName, expectedDocs, Parser.class);
@@ -275,7 +271,7 @@ public class DirectoryIndexer {
 
         System.out.printf("%n#### Start indexing ####%n");
 
-        Files.walkFileTree(docsDir, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(docsDir, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 if (file.getFileName().toString().endsWith(extension)) {
@@ -286,7 +282,7 @@ public class DirectoryIndexer {
 
                     filesCount += 1;
 
-                    Document doc = null;
+                    Document doc;
 
                     for (ParsedDocument pd : dp) {
 
@@ -317,7 +313,7 @@ public class DirectoryIndexer {
 
                 } else {
                     //here i notify if i skip a file
-                    System.out.printf("Ignoring file: %s", file.getFileName().toString());
+                    System.out.printf("Ignoring file: %s", file.getFileName());
 
 
                 }
