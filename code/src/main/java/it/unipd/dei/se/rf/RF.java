@@ -47,7 +47,7 @@ public class RF {
 
         IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexDirectoryPath)));
         IndexSearcher searcher = new IndexSearcher(reader);
-        Writer output = new BufferedWriter(new FileWriter(outputPath + "/" + runId + ".txt"));  //clears file every time
+        Writer output = new BufferedWriter(new FileWriter(outputPath + "/" + runId + "_RF.txt"));  //clears file every time
 
         try {
             // SEARCHING
@@ -77,7 +77,7 @@ public class RF {
                 for (int m = 0, n = topDocs.length; m < n; m++) {
                     docID = reader.document(topDocs[m].doc, idField).get(ParsedDocument.FIELDS.ID);
                     output.append(String.format(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", i, docID, m + 1, topDocs[m].score,
-                            runId));
+                            runId+_"RF"));
                 }
 
                 output.flush();
