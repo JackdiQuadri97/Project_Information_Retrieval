@@ -14,7 +14,7 @@ import java.io.IOException;
 public class Run {
     public static void main(String[] args) {
         String task = args[0];
-        String indexDirectoryPath = args.length > 1 ? args[1] : "experiment/index";
+        String indexDirectoryPath = args.length > 1 ? args[1] : "experiment/index3";
         String stopListFilePath = args.length > 2 ? args[2] : "lucene.txt";
         boolean filter = args.length > 3 && Boolean.parseBoolean(args[3]);
         String matching = args.length > 4 ? args[4] : "bm25";

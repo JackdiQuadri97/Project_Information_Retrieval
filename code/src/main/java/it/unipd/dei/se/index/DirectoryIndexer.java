@@ -2,6 +2,8 @@
 
 package it.unipd.dei.se.index;
 
+import com.ibm.hrl.debater.clients.SentenceTopicPair;
+import it.unipd.dei.se.argument_quality.ArgumentQualityVerifier;
 import it.unipd.dei.se.parse.document.DocumentParser;
 import it.unipd.dei.se.parse.document.ParsedDocument;
 import it.unipd.dei.se.parse.document.Parser;
@@ -9,9 +11,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.similarities.BM25Similarity;
@@ -23,6 +23,10 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Indexes documents processing a whole directory tree.
@@ -271,6 +275,8 @@ public class DirectoryIndexer {
 
         System.out.printf("%n#### Start indexing ####%n");
 
+        ArgumentQualityVerifier argumentQualityVerifier = new ArgumentQualityVerifier();
+
         Files.walkFileTree(docsDir, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -283,6 +289,8 @@ public class DirectoryIndexer {
                     filesCount += 1;
 
                     Document doc;
+
+                    List<Document> batchReadDocs = new ArrayList<>();
 
                     for (ParsedDocument pd : dp) {
 
@@ -297,9 +305,17 @@ public class DirectoryIndexer {
                         // add the document docT5query
                         doc.add(new DocT5QueryField(pd.getDocT5Query()));
 
-                        writer.addDocument(doc);
+                        batchReadDocs.add(doc);
 
                         docsCount++;
+
+                        // when the batch is full ...
+                        if(docsCount%1000 == 0) {
+                            // save the docs
+                            addScoresAndWriteBatchOfDocuments(batchReadDocs, writer, argumentQualityVerifier);
+                            // empty the batch
+                            batchReadDocs = new ArrayList<>();
+                        }
 
                         System.out.println("parsed docs: " + docsCount);
                         // print progress every 10000 indexed documents
@@ -310,6 +326,8 @@ public class DirectoryIndexer {
                         }
 
                     }
+                    // save last docs remaining in the batch (may be empty)
+                    addScoresAndWriteBatchOfDocuments(batchReadDocs, writer, argumentQualityVerifier);
 
                 } else {
                     //here i notify if i skip a file
@@ -333,6 +351,23 @@ public class DirectoryIndexer {
                 bytesCount / MBYTE, (System.currentTimeMillis() - start) / 1000);
 
         System.out.printf("#### Indexing complete ####%n");
+    }
+
+    void addScoresAndWriteBatchOfDocuments(List<Document> batchReadDocs,
+                                           IndexWriter writer,
+                                           ArgumentQualityVerifier argumentQualityVerifier) throws IOException {
+        // call to API
+        List<SentenceTopicPair> toEvaluate = batchReadDocs.stream().map(singleReadDoc -> {
+            return new SentenceTopicPair(singleReadDoc.getField(ParsedDocument.FIELDS.CONTENTS).toString(), "");
+        }).collect(Collectors.toList());
+        List<Float> scores = argumentQualityVerifier.computeScores(toEvaluate);
+
+        int i = -1;
+        for (Document readDoc: batchReadDocs) {
+            i++;
+            readDoc.add(new StoredField("score", scores.get(i)));
+            writer.addDocument(readDoc);
+        }
     }
 
 }

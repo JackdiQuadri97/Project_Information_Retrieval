@@ -11,6 +11,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * Class to obtain scores from Project Debater API
+ */
 public class ArgumentQualityVerifier {
 
     private final String apiKey;
