@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Class to obtain scores from Project Debater API
+ * Class to obtain scores.txt from Project Debater API
  */
 public class ArgumentQualityVerifier {
 
@@ -51,7 +51,7 @@ public class ArgumentQualityVerifier {
 
         List<Float> scores = argumentQualityVerifier.computeScores(sentenceTopicPairs);
 
-        System.out.println("Pairs of (sentence, topic) and their argument-quality scores:\n");
+        System.out.println("Pairs of (sentence, topic) and their argument-quality scores.txt:\n");
         for (int i = 0; i < sentenceTopicPairs.size(); i++){
             System.out.println(String.format("Sentence: %s\nTopic: %s\nScore: %.4f\n",
                     sentenceTopicPairs.get(i).getSentence(), sentenceTopicPairs.get(i).getTopic(),scores.get(i)));
