@@ -60,8 +60,9 @@ public class ArgumentQualityReranker {
     }
 
     /**
-     * Reranks the documents contained in {@code inputRunFilePath} based on the scores.txt
-     * saved in the stored field "score" of each indexed document
+     * Reranks the documents contained in {@code inputRunFilePath} based on the scores
+     * saved in the file {@code scoresFilePath}
+     * If a document is missing from the scores file it's score remains unchanged
      * @throws IOException
      * @throws ParseException
      */
@@ -75,7 +76,6 @@ public class ArgumentQualityReranker {
         BufferedReader runFileReader = new BufferedReader(new FileReader(inputRunFilePath));
         // for each line of the input run file ...
         for (String fileLine; (fileLine = runFileReader.readLine()) != null; ) {
-            System.out.println(fileLine);
 
             // create an object representing the line
             ArrayList<String> lineParts = new ArrayList<>(Arrays.asList(fileLine.split("\t")));
@@ -88,7 +88,7 @@ public class ArgumentQualityReranker {
 
             // get DebaterScore
             Float debaterScore = scoreDocs.getOrDefault(lineObject.documentId, 1f);
-            System.out.printf("got score: %s%n", debaterScore);
+            System.out.printf("got score from file: %s for document %s%n", debaterScore, lineObject.documentId);
 
             // compute and assign new score
             Double newScore = ArgumentQualityReranker.combineScores(
@@ -106,7 +106,7 @@ public class ArgumentQualityReranker {
 
         try {
             // for each lineObject in the list
-            System.out.println(newRunFileLines.size());
+            System.out.printf("Documents to be written to new run file: %s%n",newRunFileLines.size());
             for ( int i = 0; i<newRunFileLines.size(); i++) {
                 RunFilePartialLine line = newRunFileLines.get(i);
                 line.setRank(i + 1); // change the rank according to the new order
@@ -127,10 +127,10 @@ public class ArgumentQualityReranker {
         BufferedReader runFileReader = new BufferedReader(new FileReader(filePath));
         // for each line of the input run file ...
         for (String fileLine; (fileLine = runFileReader.readLine()) != null; ) {
-            System.out.println(fileLine);
             String[] lineParts = fileLine.split(" ");
             scoreDocs.put(lineParts[0], Float.valueOf(lineParts[1]));
         }
+        System.out.println("Scores retrieved");
         return scoreDocs;
     }
 
