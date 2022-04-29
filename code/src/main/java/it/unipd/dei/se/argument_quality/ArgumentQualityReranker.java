@@ -41,6 +41,8 @@ public class ArgumentQualityReranker {
             this.rank = rank;
         }
 
+        public String getTopicId(){ return topicId;}
+
         public String toString() {
             return String.format(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n",
                     topicId,
@@ -114,9 +116,17 @@ public class ArgumentQualityReranker {
         try {
             // for each lineObject in the list
             System.out.printf("Documents to be written to new run file: %s%n",newRunFileLines.size());
+            int prevTopic = Integer.parseInt(newRunFileLines.get(0).getTopicId());
+            int currTopic = Integer.parseInt(newRunFileLines.get(0).getTopicId());
+            int rank = 0;
             for ( int i = 0; i<newRunFileLines.size(); i++) {
                 RunFilePartialLine line = newRunFileLines.get(i);
-                line.setRank(i + 1); // change the rank according to the new order
+                currTopic = Integer.parseInt(line.getTopicId());
+                if(currTopic!=prevTopic){
+                    rank=i;
+                    prevTopic=currTopic;
+                }
+                line.setRank(i-rank+1); // change the rank according to the new order
                 output.append(line.toString()); // write to the output file
             }
 
@@ -144,9 +154,9 @@ public class ArgumentQualityReranker {
     public static void main (String[] args) throws IOException, ParseException {
 
         ArgumentQualityReranker.rerank(
-                "./runs/seupd2122-kueri.txt",
+                "./runs/seupd2122-kueri_kueristopv2_BM25(k1=1.2,b=0.75)_false.txt",
                 "./runs/",
-                "seupd2122-kueri_reranked",
+                "seupd2122-kueri_kueristopv2_BM25(k1=1.2,b=0.75)_false_reranked",
                 "./document_quality_scores/scores.txt");
     }
 
