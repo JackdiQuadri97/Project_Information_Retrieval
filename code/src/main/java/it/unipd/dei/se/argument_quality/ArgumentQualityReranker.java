@@ -55,7 +55,14 @@ public class ArgumentQualityReranker {
     public static class CustomComparator implements Comparator<RunFilePartialLine> {
         @Override
         public int compare(RunFilePartialLine o1, RunFilePartialLine o2) {
-            return o2.score.compareTo(o1.score);
+            int o2topic = Integer.valueOf(o2.topicId);
+            int o1topic = Integer.valueOf(o1.topicId);
+            if (o2topic==o1topic){
+                return o2.score.compareTo(o1.score);
+            }
+            else{
+                return Integer.compare(o1topic,o2topic);
+            }
         }
     }
 
@@ -127,7 +134,7 @@ public class ArgumentQualityReranker {
         BufferedReader runFileReader = new BufferedReader(new FileReader(filePath));
         // for each line of the input run file ...
         for (String fileLine; (fileLine = runFileReader.readLine()) != null; ) {
-            String[] lineParts = fileLine.split(" ");
+            String[] lineParts = fileLine.split("\t");
             scoreDocs.put(lineParts[0], Float.valueOf(lineParts[1]));
         }
         System.out.println("Scores retrieved");
@@ -139,7 +146,7 @@ public class ArgumentQualityReranker {
         ArgumentQualityReranker.rerank(
                 "./runs/seupd2122-kueri.txt",
                 "./runs/",
-                "reranked",
+                "seupd2122-kueri_reranked",
                 "./document_quality_scores/scores.txt");
     }
 
