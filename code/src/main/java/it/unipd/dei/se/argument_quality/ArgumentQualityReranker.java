@@ -55,7 +55,14 @@ public class ArgumentQualityReranker {
     public static class CustomComparator implements Comparator<RunFilePartialLine> {
         @Override
         public int compare(RunFilePartialLine o1, RunFilePartialLine o2) {
-            return o2.score.compareTo(o1.score);
+            int o2topic = Integer.valueOf(o2.topicId);
+            int o1topic = Integer.valueOf(o1.topicId);
+            if (o2topic==o1topic){
+                return o2.score.compareTo(o1.score);
+            }
+            else{
+                return Integer.compare(o1topic,o2topic);
+            }
         }
     }
 
