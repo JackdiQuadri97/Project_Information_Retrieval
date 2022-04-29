@@ -28,7 +28,7 @@ public class RRF {
             try (BufferedReader br = new BufferedReader(new FileReader(run))) {
                 for (String document; (document = br.readLine()) != null; ) {
                     System.out.println(document);
-                    ArrayList<String> tokens = new ArrayList<>(Arrays.asList(document.split("\t")));
+                    ArrayList<String> tokens = new ArrayList<>(Arrays.asList(document.split(" ")));
                     Map<String, Double> map = rrfs.get(Integer.parseInt(tokens.get(0)));
                     map.put(tokens.get(2), rff(k, Double.parseDouble(tokens.get(3))) + map.getOrDefault(tokens.get(2), 0.0));
                 }
@@ -57,7 +57,7 @@ public class RRF {
                 List<KeyScorePair> score = scores.get(i);
                 for (int j = 0; j < score.size() && j < 1000; j++) {
                     output.append(
-                            String.format(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n",
+                            String.format(Locale.ENGLISH, "%s Q0 %s %d %.6f %s%n",
                                     i,
                                     score.get(j).getKey(),
                                     j + 1,

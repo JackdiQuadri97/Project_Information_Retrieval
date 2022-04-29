@@ -361,7 +361,7 @@ public class Searcher {
                 // adding the retrieved documents for this topic to the run file
                 for (int i = 0, n = topDocs.length; i < n; i++) {
                     docID = reader.document(topDocs[i].doc, idField).get(ParsedDocument.FIELDS.ID);
-                    run.printf(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", topic.getNumber(), docID, i + 1, topDocs[i].score,
+                    run.printf(Locale.ENGLISH, "%s Q0 %s %d %.6f %s%n", topic.getNumber(), docID, i + 1, topDocs[i].score,
                             runID);
 
                 }

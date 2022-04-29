@@ -44,7 +44,7 @@ public class ArgumentQualityReranker {
         public String getTopicId(){ return topicId;}
 
         public String toString() {
-            return String.format(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n",
+            return String.format(Locale.ENGLISH, "%s Q0 %s %d %.6f %s%n",
                     topicId,
                     documentId,
                     rank,
@@ -87,7 +87,7 @@ public class ArgumentQualityReranker {
         for (String fileLine; (fileLine = runFileReader.readLine()) != null; ) {
 
             // create an object representing the line
-            ArrayList<String> lineParts = new ArrayList<>(Arrays.asList(fileLine.split("\t")));
+            ArrayList<String> lineParts = new ArrayList<>(Arrays.asList(fileLine.split(" ")));
             RunFilePartialLine lineObject = new RunFilePartialLine(
                     lineParts.get(0),
                     lineParts.get(2),
