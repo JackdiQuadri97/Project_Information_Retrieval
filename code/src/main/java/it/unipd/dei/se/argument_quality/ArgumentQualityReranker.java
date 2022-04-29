@@ -88,7 +88,7 @@ public class ArgumentQualityReranker {
 
             // get DebaterScore
             Float debaterScore = scoreDocs.getOrDefault(lineObject.documentId, 1f);
-            System.out.printf("got score from file: %s for document %s%n", debaterScore, lineObject.documentId);
+            System.out.printf("got debater score from file: %s for document %s%n", debaterScore, lineObject.documentId);
 
             // compute and assign new score
             Double newScore = ArgumentQualityReranker.combineScores(
@@ -127,8 +127,10 @@ public class ArgumentQualityReranker {
         BufferedReader runFileReader = new BufferedReader(new FileReader(filePath));
         // for each line of the input run file ...
         for (String fileLine; (fileLine = runFileReader.readLine()) != null; ) {
-            String[] lineParts = fileLine.split(" ");
-            scoreDocs.put(lineParts[0], Float.valueOf(lineParts[1]));
+            String[] lineParts = fileLine.split("\t");
+            if(lineParts.length == 2){
+                scoreDocs.put(lineParts[0], Float.valueOf(lineParts[1]));
+            }
         }
         System.out.println("Scores retrieved");
         return scoreDocs;
