@@ -57,8 +57,8 @@ public class ArgumentQualityReranker {
     public static class CustomComparator implements Comparator<RunFilePartialLine> {
         @Override
         public int compare(RunFilePartialLine o1, RunFilePartialLine o2) {
-            int o2topic = Integer.valueOf(o2.topicId);
-            int o1topic = Integer.valueOf(o1.topicId);
+            int o2topic = Integer.parseInt(o2.topicId);
+            int o1topic = Integer.parseInt(o1.topicId);
             if (o2topic==o1topic){
                 return o2.score.compareTo(o1.score);
             }
@@ -97,7 +97,7 @@ public class ArgumentQualityReranker {
 
             // get DebaterScore
             Float debaterScore = scoreDocs.getOrDefault(lineObject.documentId, 1f);
-            System.out.printf("got score from file: %s for document %s%n", debaterScore, lineObject.documentId);
+            System.out.printf("got debater score from file: %s for document %s%n", debaterScore, lineObject.documentId);
 
             // compute and assign new score
             Double newScore = ArgumentQualityReranker.combineScores(
@@ -145,7 +145,9 @@ public class ArgumentQualityReranker {
         // for each line of the input run file ...
         for (String fileLine; (fileLine = runFileReader.readLine()) != null; ) {
             String[] lineParts = fileLine.split("\t");
-            scoreDocs.put(lineParts[0], Float.valueOf(lineParts[1]));
+            if(lineParts.length == 2){
+                scoreDocs.put(lineParts[0], Float.valueOf(lineParts[1]));
+            }
         }
         System.out.println("Scores retrieved");
         return scoreDocs;
