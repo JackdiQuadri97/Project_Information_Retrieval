@@ -3,12 +3,11 @@
 
 The developed Java system is divided into the following packages, each package representing a stage:
 
-\begin{enumerate}
-  \item Parse
+
+\subsection{Parse}
   
   This package is divided into two packages: 
-    \begin{itemize}
-        \item Document
+\subsubsection{Document}
         
             The aim of this package of the project is to facilitate the parsing of the document corpus provided by CLEF for the Touchè Task 2 so that they can be used together with Lucene. The corpus for Task 2 is a collection of about 0.9 million text passages contained in a single JSON file passages.json. The file contains several documents organized as nodes of a JSON tree and each node contains 3 different fields. Namely id, contents, and chatNoirUrl. In this project only the id and the contents data of the document are retrieved from the JSON node and used in the implementation. The chatNoirUrl is not taken into account since we found it to not be relevant for the task. Furthermore, CLEF also provided a version of the corpus with text passages expanded with queries generated using DocT5Query. We found this expanded version valuable and added support for parsing it in our implementation. The DocT5Query queries are contained within the 'contents' key of each document. The parsing is implemented in the following classes:
             \begin{enumerate}
@@ -19,7 +18,7 @@ The developed Java system is divided into the following packages, each package r
                 \item
                     ParsedDocument.java: Represents the actual document to be indexed by Lucene. It defines the id, contents, and docT5Query of the JSON documents. The class defines proper getter and setter methods for the various fields to be easily retrieved and set, and it overrides utility methods like toString(), equals(), and hashCode().
             \end{enumerate}
-        \item Topic
+\subsubsection{Topic}
         
             The aim of this package of the project is to facilitate the parsing of the topics provided by CLEF for the Touchè Task 2 so that they can be used together with Lucene. The topics of Task 2 is a collection of 50 topics contained in a single XML file topics-task2.xml. The file contains the topics each having 5 different attributes. Namely number, title, objects, description, and narrative. In this project, even though all the attributes of a topic are parsed, Only the number, objects, and title are used for search. The narrative and description attributes are used for manual relevance. The parsing is implemented in the following classes:
             \begin{enumerate}
@@ -30,36 +29,32 @@ The developed Java system is divided into the following packages, each package r
                 \item
                     ParsedTopic.java: Represents the actual topic to be used in the searcher with Lucene. It defines all the attributes of a topic. The class also defines proper getter and setter methods for the various fields to be easily retrieved and set, and it overrides utility methods like toString(), equals(), and hashCode().
             \end{enumerate}
-    \end{itemize}
-  \item Analyze
+\subsection{Analyze}
   
     We have built three analyzers, to process the documents, perform tokenization and use different combination of filters.
-        \begin{enumerate}
-            \item AnalyzerUtil.java 
+\subsubsection{AnalyzerUtil.java}
             
             This is a helper class auxiliary class containing utility methods for loading stop lists in the resource folder. These stop lists were obtained from well-known standard lists based off high frequency words. Some of them are: Atire, Indri, Smart, Terrier, Zettair, Glasgow, Snowball, Okapi, and Lucene. 
-            \item BaselineAnalyzer.java
+\subsubsection{BaselineAnalyzer.java}
             
             This is a java class for tokenization which starts with a StandardTokenizer ad reducing every word to lower case using a LowerCaseFilter and then we have used the StopFilter to remove frequent words in the collection that do not bring useful information. 
-            \item MainAnalyzer.java
+\subsubsection{MainAnalyzer.java}
             
             Contains various filters from AnalyzerUtil as well as EnglishPossessiveFilter and MultipleCharsFilter. It also adds synonyms dictionary to perform a query expansion based on Wordnet.
-        \end{enumerate}
-  \item Index
+\subsection{Index}
   
      This package contains the 3 classes responsible for the index creation, they are as follows: 
-    \begin{enumerate}
-    \item  BodyField.java
+     
+\subsubsection{BodyField.java}
     
         Represents the body of a specific document it has two different constructors, one accept a Reader and the other accept a String value. The only field is BODY\_TYPE  which is tokenized and not stored, keeping only document ids and term frequencies in order to minimize the space occupation. 
-    \item DirectoryIndexer.java 
+\subsubsection{DirectoryIndexer.java}
     
         It's used for indexing the whole directory tree, it takes as parameter the Analyzer to be used, the Similarity, the size in megabytes of the buffer for indexing documents, the directory where to store the index, the directory from which documents have to be read, the extension of the files to be indexed, the charset used for encoding documents, the total number of documents expected to be indexed and the class of the DocumentParser to be used. The constructor take these handles several exception that may rise and take care of the index writer configuration. For testing purposes we added a main method which create a new DirectoryIndexer using custom parameters and than run the method index which do the actual indexing of the documents and skip every file which doesn't have the correct extension, important to note the fact that we added a new custom parameter DocT5QueryField. 
-    \item DocT5QueryField.java
+\subsubsection{DocT5QueryField.java}
     
         It manages the new tokenized and not stored field for the document, differently from the body field this class has only one constructor which accepts Strings.
-     \end{enumerate}
-  \item Search
+\subsection{Search}
   
   The search package contains just the Searcher class. This class is responsible for:
     \begin{enumerate}
@@ -83,7 +78,7 @@ The developed Java system is divided into the following packages, each package r
     	\item Whether we applied filtering or not to the search results
     	\item Analyzer, in particular the stoplist it uses
     \end{itemize}
-  \item RF
+\subsection{RF}
   
       This package contains a single class, also called RF.
         
@@ -111,7 +106,8 @@ The developed Java system is divided into the following packages, each package r
         Rocchio algorithm is written for binary relevance, our version of RF is customized to take into account the different relevance scores used in this test collections (0 to 3).
         
         The results of the search are then outputted as a standard run file.
-  \item RRF
+        
+\subsection{RRF}
   
       This package contains a single class, also called RRF.
         
@@ -130,11 +126,11 @@ The developed Java system is divided into the following packages, each package r
         Then, for each topic, documents are ranked (and ordered) based on their RRF score.
         
         The results of the search are then outputted as a standard run file.
-  \item Filter
+\subsection{Filter}
  
     The main filter class contains two methods responsible for adding the term to the search object. The main method is filterAnd it takes two parameters as input: a query parser object to convert the string into meaning full term for the search method. And a String s represents the term that needed to add to the query parser It will return an object of BooleanQuery.Builder which can be consumed later by the search method. The second method is just a helper method to extract the string object from the "objects field", tokenized the sentences, and remove any unwanted characters.
 
-  \item Argument quality
+\subsection{Argument quality}
   
   We decided to make use of IBM Project Debater API.
   
@@ -149,7 +145,8 @@ The developed Java system is divided into the following packages, each package r
        \begin{enumerate} 
            \item loads the quality scores of all the documents from the file into a Map object \item iterates over the lines of the old run file, multiplies the old score by the one assigned by Project Debater API and saves the object representing the new line to a list \item sorts the list of new lines by topic number and score and writes them on a new run file 
        \end{enumerate}
-\end{enumerate}
+
+\subsection{Run.java}
 
 The developed Java system also contains the class Run.java. This is the main class used for running the entire system. It accepts the following parameters: 
 
@@ -210,7 +207,8 @@ The developed Java system also contains the class Run.java. This is the main cla
             Possible values: any valid directory path.
             
             Default value = 'code/src/main/resource/qrels/example.txt'
-    \end{enumerate}
+
+\end{enumerate}
 
 Following is the class diagram for our implementation
 

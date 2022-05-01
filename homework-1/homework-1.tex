@@ -2,7 +2,12 @@
 
 \usepackage{acronym}
 \usepackage{subcaption}
-
+\usepackage{changepage,titlesec}
+\titleformat{\section}[block]{\Large\bfseries}{\thesection.}{1em}{}
+\titleformat{\subsection}[block]{\large\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}[block]{\bfseries}{\thesubsubsection}{1em}{}
+\titlespacing*{\subsection} {2em}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+\titlespacing*{\subsubsection} {3em}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 \renewcommand{\acffont}[1]{\textsl{#1}}
 
 
@@ -33,23 +38,23 @@
 email=maria.aba@studenti.unipd.it
 ]
 
-\author[2]{Munzer Azra}[%
+\author[1]{Munzer Azra}[%
 email=munzer.azra@studenti.unipd.it
 ]
 
-\author[3]{Marco Gallo}[%
+\author[1]{Marco Gallo}[%
 email=marco.gallo.9@studenti.unipd.it
 ]
 
-\author[4]{Odai Mohammad}[%
+\author[1]{Odai Mohammad}[%
 email=odai.mohammad@studenti.unipd.it
 ]
 
-\author[5]{Ivan Piacere}[%
+\author[1]{Ivan Piacere}[%
 email=ivan.piacere@studenti.unipd.it
 ]
 
-\author[6]{Giacomo Virginio}[%
+\author[1]{Giacomo Virginio}[%
 email=giacomo.virginio@studenti.unipd.it
 ]
 
