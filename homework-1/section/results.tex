@@ -9,7 +9,7 @@ The runs' performance has been evaluated using \textit{trec\_eval}, the key meas
 
 All the runs, their characteristics and key measures are reported in Table \ref{tab:results-table} and \ref{tab:results-rrf-table}. The five runs with their number in bold are the five submitted runs.
 
-All the runs make use of lucene's Standard tokenizer and Lowercase filter, except for runs obtained using Relevance Feedback, that use Letter tokenizer instead; this is because some of the tokens obtained using standard tokenizer were written in a format that caused errors when used as query (e.g. "text:text:text" would be a token that caused errors).
+All the runs are performed on indexes obtained using Standard tokenizer and Lowercase filter, except for indexes used in runs obtained using Relevance Feedback, which use Letter tokenizer instead; this is because some of the tokens obtained using standard tokenizer were written in a format that caused errors when used as query (e.g. "text:text:text" would be a token that caused errors).
 
 \begin{table}[b]
 	\caption{NDCG@5 and setup for single runs}
