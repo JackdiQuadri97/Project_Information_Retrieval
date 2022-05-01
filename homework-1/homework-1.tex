@@ -24,21 +24,33 @@
 
 %%
 %% The "title" command
-\title{Title of your Homework 1}
+\title{Touché Task 2: Argument Retrieval for Comparative Questions}
 
 %%
 %% The "author" command and its associated commands are used to define
 %% the authors and their affiliations.
-\author[1]{Name Surname}[%
-email=name.surname@studenti.unipd.it
+\author[1]{Maria Aba}[%
+email=maria.aba@studenti.unipd.it
 ]
 
-\author[1]{Name Surname}[%
-email=name.surname@studenti.unipd.it
+\author[2]{Munzer Azra}[%
+email=munzer.azra@studenti.unipd.it
 ]
 
-\author[1]{Name Surname}[%
-email=name.surname@studenti.unipd.it
+\author[3]{Marco Gallo}[%
+email=marco.gallo.9@studenti.unipd.it
+]
+
+\author[4]{Odai Mohammad}[%
+email=odai.mohammad@studenti.unipd.it
+]
+
+\author[5]{Ivan Piacere}[%
+email=ivan.piacere@studenti.unipd.it
+]
+
+\author[6]{Giacomo Virginio}[%
+email=giacomo.virginio@studenti.unipd.it
 ]
 
 \address[1]{University of Padua, Italy}
@@ -48,21 +60,18 @@ email=name.surname@studenti.unipd.it
 %% The abstract is a short summary of the work to be presented in the
 %% article.
 \begin{abstract}
-  A clear and well-documented \LaTeX{} document is presented as an
-  article formatted for publication by CEUR-WS in a conference
-  proceedings. Based on the ``ceurart'' document class, this article
-  presents and explains many of the common variations, as well as many
-  of the formatting elements an author may use in the preparation of
-  the documentation of their work.
+	In this paper we present the information retrieval system we developed for the 2022 Touché @ CLEF Task 2 evaluation campaign.\\
+	This tasks' aim is to create systems that are able to retrieve documents that compare two options, e.g. which is the best pet between a dog and a cat.\\
+	Here we describe the architecture of our system, we list the software and hardware resources we made use of, we discuss the results obtained using different configurations and finally we present improvements which could be applied to our system to enhance it's performance.
 \end{abstract}
 
 %%
 %% Keywords. The author(s) should pick words that accurately describe
 %% the work being presented. Separate the keywords with commas.
 \begin{keywords}
-  keyword 1 \sep
-  keyword 2 \sep
-  keyword 3 
+  Information retrieval \sep
+  Comparative questions \sep
+  Lucene
 \end{keywords}
 
 %%
@@ -81,77 +90,8 @@ email=name.surname@studenti.unipd.it
 
 \input{section/conclusion}
 
-
-\section{Misc [TO BE REMOVED]}
-
-\subsection{Tex Files}
-
-Put your \LaTeX files into the \texttt{section} folder as shown in the examples above.
-
-\subsection{Figures}
-
-Put your figures into the \texttt{figure} folder and put the caption under the figure. Example of reference to Figure~\ref{fig:sample-figure}.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.8\linewidth]{figure/sample.pdf}
-  \caption{1907 Franklin Model D roadster. Photograph by Harris \& Ewing, Inc. [Public domain], via Wikimedia Commons. (\url{https://goo.gl/VLCRBB}).}
-  \label{fig:sample-figure}
-\end{figure}
-
-\subsection{Tables}
-
-Put the caption above the table. Example of reference to Table~\ref{tab:sample-table}.
-
-\begin{table}
-  \caption{Frequency of Special Characters}
-  \label{tab:sample-table}
-  \centering
-  \begin{tabular}{|c|c|l|}
-    \toprule
-    Non-English or Math&Frequency&Comments\\
-    \midrule
-    \O & 1 in 1,000& For Swedish names\\
-    $\pi$ & 1 in 5& Common in math\\
-    \$ & 4 in 5 & Used in business\\
-    $\Psi^2_1$ & 1 in 40,000& Unexplained usage\\
-  \bottomrule
-\end{tabular}
-\end{table}
-
-See the \texttt{booktab} packaged documentation for further options.
-
-\subsection{Bibliography}
-
-Example of citations:
-\begin{itemize}
-	\item name: \citet{Salton1968}
-	\item parenthesis: \citep{Salton1968}
-\end{itemize}
-
-An initial list of references is provided in the files \texttt{bibliography.bib} and \texttt{proceedings.bib} that you can expand.
-
-See the \texttt{natbib} packaged documentation for further options.
-
-\subsection{Acronyms}
-
-Use the 
-
-\begin{verbatim}
- \ac{acronym}
- \end{verbatim}
-
-command to insert acronyms, eg. \ac{AP}. The command will expand the acronym the first time it is used.
-
-An initial list of acronyms is provided in the file \texttt{acronyms.tex} that you can expand.
-
-See the \texttt{acronym} packaged documentation for further options.
-
-
 %% Define the bibliography file to be used
 \bibliography{bibliography,proceedings}
-
-\input{acronyms}
 
 
 \end{document}
