@@ -1,6 +1,15 @@
 \section{Conclusions and Future Work}
 \label{sec:conclusion}
 
-Provide a summary of what are the main achievements and findings. 
+We managed to test out different techniques and tools studied in lessons, to discover new ones on our own and experiment first hand their impact in a "real world" application.
 
-Discuss future work, e.g. what you may try next and/or how your approach could be further developed.
+We managed to improve substantially the performance of the runs compare to the initial lucene baseline, with an increase in score of over 50\% when considering our best performing non-overfitted run.
+
+The greatest impact we noticed, except for the use of RF (that as explain we can't quantify), comes from reranking, the use of a stemmer and a stoplist customized to our corpus.
+
+This is remarkable also because, due to the lack of access to last year's corpus, it wasn't possible for us to perform any fine-tuning.
+
+Having access to such test collections would allow us for example to fine tune BM25 parameters, the field weights, the boosts for terms in RF, we could experiment with many more stoplists and stemmers.
+As an example, a run implementing Porter stemmer (or a different stemmer), fine tuned weights with the Contents field having more weight than the DocT5Query one would probably best all the other single runs, but the extra time it took us to also manually assess documents proved to be a strong limiting factor in the expansion of our experiments.
+
+In future works it would be interesting to experiment with other "classic" method, for example using singles, but mostly with machine learning and deeplearning techniques, that have become the standard in the last decade of information retrieval; it would also be interesting having the chance to work with data in formats different than full-text, with the addition of metadata (for example in this case, since the corpus was created crawling the web having access to metadata from the webpages would have presented new opportunities).
