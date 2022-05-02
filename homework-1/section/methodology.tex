@@ -96,7 +96,7 @@ The developed Java system is divided into the following packages, each package r
         
         RF functions in a similar way to the Searcher class, with the exception of building the query used in the searching using the tokens present in relevant documents, instead of using the terms in title field of the topics file.
         
-        The class collect all docID and relevance of relevant documents in the \textit{qrels} file.
+        The class collects all docID and relevance of relevant documents in the \textit{qrels} file.
         
         The tokens and their frequency in the relevant documents are retrieved by searching the document by docID and iterating through its termvector.
         
@@ -138,13 +138,13 @@ The developed Java system is divided into the following packages, each package r
         The results of the search are then outputted as a standard run file.
 \subsection{Filter}
  
-    The main filter class contains two methods responsible for adding the term to the search object. The main method is filterAnd it takes two parameters as input: a query parser object to convert the string into meaning full term for the search method. And a String s represents the term that needed to add to the query parser It will return an object of BooleanQuery.Builder which can be consumed later by the search method. The second method is just a helper method to extract the string object from the "objects field", tokenized the sentences, and remove any unwanted characters.
+    The main filter class contains two methods responsible for adding the term to the search object. The main method is filterAnd. It takes two parameters as input: a query parser object to convert the string into a meaningful term for the search method. And a String s that represents the term that needed to add to the query parser. It will return an object of BooleanQuery.Builder which can be consumed later by the search method. The second method is just a helper method to extract the string object from the "objects field", tokenize the sentences, and remove any unwanted characters.
 
 \subsection{Argument quality}
   \label{subsec:Argument quality}
   We decided to make use of IBM Project Debater API.
   
-      Project Debater is an AI system used to perform various tasks about debating at a human level. IBM makes freely available, for research purposes, some services bases on this system through an API. \citep{ProjectDebaterAPI}
+      Project Debater is an AI system used to perform various tasks about debating at a human level. IBM makes freely available, for research purposes, some services based on this system through an API. \citep{ProjectDebaterAPI}
       
       We were interested in the argument quality service of the API. It accepts a couple of strings labeled as Sentence and Topic, and it returns a float score in the range 0-1 based on the relevance of the sentence for the topic and on the quality of the sentence as a text, which means how good it is written. We were not interested in the first part of the evaluation because the rest of our system was designed to do that, so it would be redundant. We just wanted to evaluate the text quality. So we decided to send Sentence-Topic pairs in which the Topic part was an empty string.
       
@@ -153,7 +153,7 @@ The developed Java system is divided into the following packages, each package r
       Then we had to use the obtained scores to rerank the results of the search saved in a run file. So we defined the ArgumentQualityReranker class which:
       
        \begin{enumerate} 
-           \item loads the quality scores of all the documents from the file into a Map object \item iterates over the lines of the old run file, multiplies the old score by the one assigned by Project Debater API and saves the object representing the new line to a list \item sorts the list of new lines by topic number and score and writes them on a new run file 
+           \item loads the quality scores of all the documents from the file into a Map object \item iterates over the lines of the old run file and for each: multiplies the old score by the one assigned by Project Debater API and saves the object representing the new line to a list \item sorts the list of new lines by topic number and score and writes them on a new run file 
        \end{enumerate}
 
 \subsection{Run.java}
