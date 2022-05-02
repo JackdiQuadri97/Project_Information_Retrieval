@@ -3,7 +3,7 @@
 
 The conventional and ideal approach when evaluating the performance of the runs would have been to use last year's test collection. However, since we did not have access to last year's corpus we have decided to use this year's test collection to evaluate our systems, using a \textit{qrels} file containing relevance feedback manually performed by us.
 
-The \textit{qrels} file contains has been built by gathering, for each of the runs performed, the top 5 ranked documents for each topic.
+The \textit{qrels} file has been built by gathering, for each of the runs performed, the top 5 ranked documents for each topic.
 
 The runs' performance has been evaluated using \textit{trec\_eval}, the key measures considered are \textit{NDCG@5}, the official measure used by CLEF to rank runs, and \textit{num\_q}, the number of topics retrieved (since some runs retrieved no documents for some of the topics).
 
@@ -80,7 +80,7 @@ Despite having worse results when taken singularly, runs using filtering can be 
 \item Runs 11 to 14 use the same setup as the current best performing run, 7, changing the weight of Contents and DocT5Query fields respectively.
 When searching on a single field (weight 0 on the other field) the score is much worse, increasing the weight of DocT5Query field slightly worsens the score, increasing the weight of Contents field instead improve the score.
 
-\item Run 15 adds to the setup of run 7 a stemmer, specifically Porter stemmer; this addition bring to a good improvement in performance.
+\item Run 15 adds to the setup of run 7 a stemmer, specifically Porter stemmer; this addition brings to a good improvement in performance.
 
 \item Runs 16 and 17 instead are performed using Relevance Feedback, respectively without stemmer and with Porter stemmer; These runs have an NDGC@5 score incredibly higher than the previous ones, this however is due to using the same collection, and in particular the same \textit{qrels}, to obtain the RF runs and to score its performance.
 To have a more reliable assessment of performance we could have done the search on a index built removing documents present in the qrels file. However, while this would have prevented the overfitting problem, we still couldn't have directly compared results to other runs; in fact, the documents in the \textit{qrels} file, being the top documents retrieved, should be the most relevant, which mean we should have expected worse results by the runs performed when removing the documents from the collection.
