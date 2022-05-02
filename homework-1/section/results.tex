@@ -11,7 +11,7 @@ All the runs, their characteristics and key measures are reported in Table \ref{
 
 All the runs are performed on indexes obtained using Standard tokenizer and Lowercase filter, except for indexes used in runs obtained using Relevance Feedback, which use Letter tokenizer instead; this is because some of the tokens obtained using standard tokenizer were written in a format that caused errors when used as query (e.g. "text:text:text" would be a token that caused errors).
 
-\begin{table}[b]
+\begin{table}[t]
 	\caption{NDCG@5 and setup for single runs}
 	\label{tab:results-table}
 	\centering
@@ -51,7 +51,7 @@ All the runs are performed on indexes obtained using Standard tokenizer and Lowe
 	\end{tabular}
 \end{table}
 
-\begin{table}
+\begin{table}[t]
 	\caption{NDCG@5 and setup for rrf runs}
 	\label{tab:results-rrf-table}
 	\centering
@@ -65,26 +65,29 @@ All the runs are performed on indexes obtained using Standard tokenizer and Lowe
 	\end{tabular}
 \end{table}
 
-The runs 1 to 3 compare BM25, Dirichlet and TFIDF Similarity as scoring functions, using lucene stoplist.
+\begin{itemize}
+\item The runs 1 to 3 compare BM25, Dirichlet and TFIDF Similarity as scoring functions, using lucene stoplist.
 The run using BM25 was the best performer, so we decided to use this Similarity for all the other experiments.
 
-Runs 1 and 4 to 7 compare different stoplists, in particular we compared lucene, smart and terrier stoplists and our own custom stoplists kueristop and kueristopv2; the results show that among the "generic" stoplists the larger ones have a bigger impact, but custom stoplists bring to even better improvements, with kueristopv2 being the best.
+\item Runs 1 and 4 to 7 compare different stoplists, in particular we compared lucene, smart and terrier stoplists and our own custom stoplists kueristop and kueristopv2; the results show that among the "generic" stoplists the larger ones have a bigger impact, but custom stoplists bring to even better improvements, with kueristopv2 being the best.
 
-We then wanted to assess the impact of filtering the runs by all the terms in the object field.
+\item We then wanted to assess the impact of filtering the runs by all the terms in the object field.
 Runs 8, 9 and 10 are performed adding the filter to the setup of runs 1, 6 and 7.
 Run 9 only retrieved documents for 41 topics, as 9 topics contain, in the ojects field, terms that are in the stoplist (and therefore are in the index); runs 8 and 10 retrieve documents for 48 queries, because lucene and kueristopv2 contain the terms "the" and "in", which again are in the objects field for two queries.
 The runs with filtering have a better \textit{NDCG@5} score compared to runs without, however they retrieve less topics. Retrieving no documents for some topics make us assess these runs as worse performing compared to the ones without filtering. Moreover the improvement in \textit{NDCG@5} score could be caused in part by the lack of these topics, as the system could have worse performance for these topics compared to the others.
 Despite having worse results when taken singularly, runs using filtering can be used to improve other runs by using \textit{RRF}.
 
-Runs 11 to 14 use the same setup as the current best performing run, 7, changing the weight of Contents and DocT5Query fields respectively.
+\item Runs 11 to 14 use the same setup as the current best performing run, 7, changing the weight of Contents and DocT5Query fields respectively.
 When searching on a single field (weight 0 on the other field) the score is much worse, increasing the weight of DocT5Query field slightly worsens the score, increasing the weight of Contents field instead improve the score.
 
-Run 15 adds to the setup of run 7 a stemmer, specifically Porter stemmer; this addition bring to a good improvement in performance.
+\item Run 15 adds to the setup of run 7 a stemmer, specifically Porter stemmer; this addition bring to a good improvement in performance.
 
-Runs 16 and 17 instead are performed using Relevance Feedback, respectively without stemmer and with Porter stemmer; These runs have an NDGC@5 score incredibly higher than the previous ones, this however is due to using the same collection, and in particular the same \textit{qrels}, to obtain the RF runs and to score its performance.
+\item Runs 16 and 17 instead are performed using Relevance Feedback, respectively without stemmer and with Porter stemmer; These runs have an NDGC@5 score incredibly higher than the previous ones, this however is due to using the same collection, and in particular the same \textit{qrels}, to obtain the RF runs and to score its performance.
 To have a more reliable assessment of performance we could have done the search on a index built removing documents present in the qrels file. However, while this would have prevented the overfitting problem, we still couldn't have directly compared results to other runs; in fact, the documents in the \textit{qrels} file, being the top documents retrieved, should be the most relevant, which mean we should have expected worse results by the runs performed when removing the documents from the collection.
 
-The first \textit{rrf} run is obtained fusing a mixture of well performing and slightly different runs: 10, 14, 15, 16 and 17. It presents a very good NDCG@5 score, but since it uses \textit{RF} runs the score is not reliable as these runs also may contain overfitting.
+\item The first \textit{rrf} run is obtained fusing a mixture of well performing and slightly different runs: 10, 14, 15, 16 and 17. It presents a very good NDCG@5 score, but since it uses \textit{RF} runs the score is not reliable as these runs also may contain overfitting.
 
-Runs 18 to 22 and the second \textit{rrf} run are obtained by applying reranking to the runs above (10, 14, 15, 16 and 17 and their fusion).
+\item Runs 18 to 22 and the second \textit{rrf} run are obtained by applying reranking to the runs above (10, 14, 15, 16 and 17 and their fusion).
 Comparing to their non-reranked respectives we can see that results on RF and rrf runs are mixed, but again not the most reliable because of previous overfitting; on the other three runs instead reranking offers a really great improvement in performance.
+
+\end{itemize}

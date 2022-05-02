@@ -1,6 +1,16 @@
 \section{Methodology}
 \label{sec:methodology}
 
+
+The following is the class diagram for our implementation: Figure \ref{fig:class-diagram}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{figure/class-diagram.PNG}
+	\caption{Class diagram of the project}
+	\label{fig:class-diagram}
+\end{figure}
+
 The developed Java system is divided into the following packages, each package representing a stage:
 
 
@@ -131,7 +141,7 @@ The developed Java system is divided into the following packages, each package r
     The main filter class contains two methods responsible for adding the term to the search object. The main method is filterAnd it takes two parameters as input: a query parser object to convert the string into meaning full term for the search method. And a String s represents the term that needed to add to the query parser It will return an object of BooleanQuery.Builder which can be consumed later by the search method. The second method is just a helper method to extract the string object from the "objects field", tokenized the sentences, and remove any unwanted characters.
 
 \subsection{Argument quality}
-  
+  \label{subsec:Argument quality}
   We decided to make use of IBM Project Debater API.
   
       Project Debater is an AI system used to perform various tasks about debating at a human level. IBM makes freely available, for research purposes, some services bases on this system through an API. \citep{ProjectDebaterAPI}
@@ -165,6 +175,7 @@ The developed Java system also contains the class Run.java. This is the main cla
             Possible values: the path to the index.
             
             Default value = 'experiment/index'
+            
         \item stopListFilePath
             
             Specifies the location of the stop list file to use.
@@ -209,11 +220,3 @@ The developed Java system also contains the class Run.java. This is the main cla
             Default value = 'code/src/main/resource/qrels/example.txt'
 
 \end{enumerate}
-
-Following is the class diagram for our implementation
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=\textwidth]{figure/class-diagram.PNG}
-\caption{Class diagram of the project}
-\end{figure}

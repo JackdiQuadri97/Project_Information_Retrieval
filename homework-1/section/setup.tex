@@ -1,17 +1,27 @@
 \section{Experimental Setup}
 \label{sec:setup}
 
-Describe the experimental setup, i.e.
-
 \subsection{Collections}
 
-	The collections used throughout the process of system development were the ones provided by CLEF for the Touché 2022 edition. Those include:
+	Some of the collections used throughout the process of system development were the ones provided by CLEF for the Touché 2022 edition. Those include:
 
-	\begin{enumerate}
+	\begin{itemize}
 		\item topics-task2.xml which contains the topics.
 		\item The original version of passages.jsonl which contains the documents.
 		\item DocT5Query expanded version of passages.jsonl which contains the documents expanded with queries generated using DocT5Query.
-	\end{enumerate}
+	\end{itemize}
+
+	Other collections are:
+	\begin{itemize}
+		\item Historical stoplists: lucene, smart and terrier;
+		\item Custom stoplists:
+			\begin{itemize}
+				\item Kueristop - Stoplist formed by the 400 most concurrent term in the Contents field of the document collection;
+				\item Kueristopv2 - Subset of kueristop, obtained by removing from it terms appearing in the Objects field of the topics, except for the very general terms also appearing in lucene stoplist ("in" and "the").
+			\end{itemize}
+		\item Sentence quality - file containing, for each document in the document Collection, the pairs of docIds and the score obtained by that document as explained in \ref{subsec:Argument quality}.
+	\end{itemize}
+	
 
 \subsection{Evaluation measures}
 
