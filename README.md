@@ -1,8 +1,10 @@
-# Search Engines (SE) - Repository Template
+# Touché Task 2: Argument Retrieval for Comparative Questions
 
-This repository is a template repository for the homeworks to be developed in the [Search Engines](https://iiia.dei.unipd.it/education/search-engines/) course.
+This repository is the author's implementation for the homework developed in the [Search Engines](https://iiia.dei.unipd.it/education/search-engines/) course.
 
 The homeworks are carried out by groups of students and consists in participating to one of the labs organized yearly by [CLEF](https://www.clef-initiative.eu/) (Conference and Labs of the Evaluation Forum).
+
+This implementation is the author's participation in Touché Task 2: Argument Retrieval for Comparative Questions
 
 *Search Engines* is a course of the
 
@@ -10,6 +12,14 @@ The homeworks are carried out by groups of students and consists in participatin
 * [Master Degree in Data Science](https://datascience.math.unipd.it/) of the  [Department of Mathematics "Tullio Levi-Civita"](https://www.math.unipd.it/en/), [University of Padua](https://www.unipd.it/en/), Italy.
 
 *Search Engines* is part of the teaching activities of the [Intelligent Interactive Information Access (IIIA) Hub](http://iiia.dei.unipd.it/).
+
+### Authors ###
+* [Maria Aba](mailto:maria.aba@studenti.unipd.it)
+* [Munzer Azra](mailto:munzer.azra@studenti.unipd.it)
+* [Marco Gallo](mailto:marco.gallo.9@studenti.unipd.it)
+* [Odai Mohammad](mailto:odai.mohammad@studenti.unipd.it)
+* [Ivan Piacere](mailto:ivan.piacere@studenti.unipd.it)
+* [Giacomo Virginio](mailto:giacomo.virginio@studenti.unipd.it)
 
 ### Organisation of the repository ###
 
