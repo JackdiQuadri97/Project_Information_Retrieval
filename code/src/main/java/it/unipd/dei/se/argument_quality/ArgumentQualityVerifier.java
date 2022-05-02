@@ -17,9 +17,13 @@ import java.util.*;
 
 public class ArgumentQualityVerifier {
 
+    // Declaring a variable called apiKey of type String and it is final, so it cannot be changed.
     private final String apiKey;
+
+    // Creating an object of the class ArgumentQualityClient.
     private final ArgumentQualityClient argumentQualityClient;
 
+    // Reading the api key from the file.
     public ArgumentQualityVerifier(String apiKeyPath, String apiKeyPropertyName) throws IOException {
         // read secret
         File f = new File(apiKeyPath);
@@ -33,12 +37,26 @@ public class ArgumentQualityVerifier {
         this.argumentQualityClient =  DebaterApi.builder().build().getArgumentQualityClient();
     }
 
+    // A constructor that calls another constructor with the arguments "./secrets/secrets.txt" and "DEBATER_API_KEY".
     public ArgumentQualityVerifier() throws IOException {
         this("./secrets/secrets.txt", "DEBATER_API_KEY");
     }
+
+    /**
+     * This function takes a list of sentence topic pairs and returns a list of scores
+     *
+     * @param sentenceTopicPairs A list of SentenceTopicPair objects. Each SentenceTopicPair object contains a sentence and
+     * a topic.
+     * @return A list of scores for each sentence-topic pair.
+     */
     public List<Float> computeScores(List<SentenceTopicPair> sentenceTopicPairs) throws IOException {
         return this.argumentQualityClient.getScores(sentenceTopicPairs, this.apiKey);
     }
+
+    /**
+     * It takes a folder of documents, and for each document, it computes the quality score of each sentence in the
+     * document
+     */
     public static void main (String[] args) throws IOException {
 
         String Topic = "";

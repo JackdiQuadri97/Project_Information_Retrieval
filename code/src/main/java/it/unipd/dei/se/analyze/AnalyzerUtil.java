@@ -368,6 +368,13 @@ public class AnalyzerUtil {
 
         return model;
     }
+
+    /**
+     * It reads a file containing a list of synonyms and returns a CharArraySet containing the synonyms
+     *
+     * @param SynonymsFile The name of the file containing the synonym list.
+     * @return A CharArraySet object containing the synonyms list.
+     */
     static CharArraySet loadSynonymsList(final String SynonymsFile) {
 
         if (SynonymsFile == null) {

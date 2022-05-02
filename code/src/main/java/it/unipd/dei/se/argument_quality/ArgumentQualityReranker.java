@@ -10,6 +10,9 @@ import java.util.*;
 
 public class ArgumentQualityReranker {
 
+    /**
+     * It's a class that represents a single line in a run file
+     */
     private static class RunFilePartialLine {
         public String topicId;
         public String documentId;
@@ -54,6 +57,12 @@ public class ArgumentQualityReranker {
         }
     }
 
+    /**
+     * The class implements the Comparator interface and overrides the compare method. The compare method takes two
+     * RunFilePartialLine objects as input and returns an integer. The integer is negative if the first object is less than
+     * the second object, zero if the two objects are equal, and positive if the first object is greater than the second
+     * object
+     */
     public static class CustomComparator implements Comparator<RunFilePartialLine> {
         @Override
         public int compare(RunFilePartialLine o1, RunFilePartialLine o2) {
@@ -137,8 +146,22 @@ public class ArgumentQualityReranker {
 
     }
 
+    /**
+     * Combine two scores by multiplying them together.
+     *
+     * @param score1 The score of the first word in the pair.
+     * @param score2 The score of the second document.
+     * @return The product of the two scores.
+     */
     public static Double combineScores(Double score1, Double score2) { return score1 * score2; }
 
+    /**
+     * It reads a file line by line, splits each line into two parts (the first part is the document ID, the second part is
+     * the score), and stores the document ID and score in a map
+     *
+     * @param filePath The path to the run file
+     * @return A map of the document id and the score
+     */
     public static Map<String,Float> retrieveScoresFromFile(String filePath) throws IOException {
         Map<String,Float> scoreDocs = new HashMap<>();
         BufferedReader runFileReader = new BufferedReader(new FileReader(filePath));
@@ -153,6 +176,9 @@ public class ArgumentQualityReranker {
         return scoreDocs;
     }
 
+    /**
+     * It reranks the run file using the document quality scores.
+     */
     public static void main (String[] args) throws IOException, ParseException {
 
         ArgumentQualityReranker.rerank(

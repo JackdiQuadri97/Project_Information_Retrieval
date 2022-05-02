@@ -235,10 +235,23 @@ public class DirectoryIndexer {
      * @throws Exception if something goes wrong while indexing.
      */
 
+    /**
+     * It takes a directory, a similarity function, and a file, and it indexes the file into the directory using the
+     * similarity function
+     */
     public static void main(String[] args) throws Exception {
         doIndex("experiment/index", new BM25Similarity(), "lucene.txt");
     }
 
+    /**
+     * It creates an index of the documents in the folder `code/src/main/resource/corpus_folder` using the `CustomAnalyzer`
+     * defined in `code/src/main/resource/analyzer.json` and the `Similarity` defined in
+     * `code/src/main/resource/similarity.json` and stores the index in the folder `index`
+     *
+     * @param indexPath the path to the folder where the index will be stored
+     * @param similarity the similarity to use for the index.
+     * @param stopWordsFilePath path to a file containing stop words, one per line.
+     */
     public static void doIndex(@NotNull String indexPath, @NotNull Similarity similarity, @NotNull String stopWordsFilePath) throws IOException {
         final int ramBuffer = 256;
         // final String docsPath = "C:\\Users\\ivanp\\Desktop\\datasets\\touche2022\\touche-task2-expandend_reduced";

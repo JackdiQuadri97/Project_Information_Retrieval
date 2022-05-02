@@ -23,12 +23,31 @@ public class RF {
 
     }
 
+    /**
+     * It takes the index directory path, the output path, the run id, and the qrels file path, and it returns a list of
+     * lists of maps of strings to integers
+     *
+     * @param indexDirectoryPath The path to the directory where the index is stored.
+     * @param outputPath The path to the output file.
+     * @param runId The name of the run. This will be used to name the output file.
+     * @param qrelsFilePath The path to the qrels file.
+     */
     public static void doSearch(String indexDirectoryPath, String outputPath, String runId, String qrelsFilePath) throws IOException, ParseException {
         List<List<Map<String, Integer>>> termFreq = getTopicTermFrequencies(indexDirectoryPath, qrelsFilePath);
 
         search(indexDirectoryPath, outputPath, runId, termFreq);
     }
 
+    /**
+     * It takes in a list of lists of maps, where each list of maps represents a topic, and each map represents a term and
+     * its frequency in that topic. It then searches the index for each topic, and outputs the results to a file
+     *
+     * @param indexDirectoryPath the path to the directory where the index is stored
+     * @param outputPath the path to the folder where the run file will be saved
+     * @param runId the name of the run file
+     * @param termFreq a list of lists of maps. Each list of maps represents a topic. Each map represents a term and its
+     * frequency.
+     */
     public static void search(String indexDirectoryPath, String outputPath, String runId, List<List<Map<String, Integer>>> termFreq) throws IOException, ParseException {
 
         System.out.printf("%n#### Start searching ####%n");
@@ -95,6 +114,16 @@ public class RF {
         System.out.printf("#### Searching complete ####%n");
     }
 
+    /**
+     * It takes the index directory path and the qrels file path as input, and returns a list of lists of maps. The outer
+     * list has 101 elements, one for each topic. The inner list has 4 elements, one for each relevance level. The map has
+     * the term as the key and the term frequency as the value
+     *
+     * @param indexDirectoryPath The path to the directory where the index is stored.
+     * @param qrelsFilePath The path to the qrels file.
+     * @return A list of lists of maps. Each list of maps represents a topic. Each map represents a relevance level. Each
+     * map contains the term frequencies for that relevance level.
+     */
     private static List<List<Map<String, Integer>>> getTopicTermFrequencies(String indexDirectoryPath, String qrelsFilePath) throws IOException {
         List<List<Map<String, Integer>>> topicsRfs = new ArrayList<>();
         for (int i = 0; i < 101; i++) {

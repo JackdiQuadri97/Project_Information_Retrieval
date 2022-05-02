@@ -24,6 +24,13 @@ public class BaselineAnalyzer extends Analyzer {
         return new TokenStreamComponents(source, tokens);
     }
 
+    /**
+     * If you want to strip HTML tags from your text, uncomment the line that returns the HTMLStripCharFilter.
+     *
+     * @param fieldName The name of the field being indexed.
+     * @param reader the Reader object that is being used to read the contents of the file
+     * @return The reader is being returned.
+     */
     @Override
     protected Reader initReader(String fieldName, Reader reader) {
         // return new HTMLStripCharFilter(reader);
@@ -31,6 +38,13 @@ public class BaselineAnalyzer extends Analyzer {
         return super.initReader(fieldName, reader);
     }
 
+    /**
+     * If the field is 'title', then return a new LowerCaseFilter(in)
+     *
+     * @param fieldName The name of the field being analyzed.
+     * @param in The token stream to be filtered.
+     * @return A new LowerCaseFilter object.
+     */
     @Override
     protected TokenStream normalize(String fieldName, TokenStream in) {
         return new LowerCaseFilter(in);

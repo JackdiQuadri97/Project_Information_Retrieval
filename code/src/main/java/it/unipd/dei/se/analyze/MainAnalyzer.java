@@ -19,6 +19,12 @@ public class MainAnalyzer extends Analyzer {
         super();
     }
 
+    /**
+     * The function creates a token stream from a given string
+     *
+     * @param fieldName The name of the field being analyzed.
+     * @return A token stream.
+     */
     @Override
     protected TokenStreamComponents createComponents(String fieldName) {
 
@@ -51,6 +57,13 @@ public class MainAnalyzer extends Analyzer {
     }
 
 
+    /**
+     * If you want to strip HTML tags from your text, uncomment the line that returns a new HTMLStripCharFilter.
+     *
+     * @param fieldName The name of the field being indexed.
+     * @param reader the Reader object that is being used to read the contents of the file
+     * @return The reader is being returned.
+     */
     @Override
     protected Reader initReader(String fieldName, Reader reader) {
         // return new HTMLStripCharFilter(reader);
@@ -58,6 +71,13 @@ public class MainAnalyzer extends Analyzer {
         return super.initReader(fieldName, reader);
     }
 
+    /**
+     * If the field name is 'content', then return a new LowerCaseFilter that wraps the input TokenStream.
+     *
+     * @param fieldName The name of the field being analyzed.
+     * @param in The token stream to be filtered.
+     * @return A new LowerCaseFilter object.
+     */
     @Override
     protected TokenStream normalize(String fieldName, TokenStream in) {
         return new LowerCaseFilter(in);

@@ -17,6 +17,7 @@ public class Parser extends DocumentParser {
     private final ObjectMapper objectMapper;
     private final JsonParser jsonParser;
 
+    // Creating a new Parser object.
     public Parser(Reader in) {
         super(new BufferedReader(in));
         objectMapper = new ObjectMapper();
@@ -27,11 +28,22 @@ public class Parser extends DocumentParser {
         }
     }
 
+    /**
+     * This function returns the document that was parsed.
+     *
+     * @return The document that was parsed.
+     */
     @Override
     protected ParsedDocument parse() {
         return document;
     }
 
+    /**
+     * We are at the start of the documents array and the current token is '{'. We read the current token and check if it
+     * is a valid document. If it is, we return true. If it is not, we return false
+     *
+     * @return A ParsedDocument object
+     */
     @Override
     public boolean hasNext() {
         try {

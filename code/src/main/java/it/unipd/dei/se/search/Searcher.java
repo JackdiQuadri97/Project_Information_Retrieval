@@ -297,6 +297,17 @@ public class Searcher {
 
     }
 
+    /**
+     * It creates a new Searcher object, which is a class that contains all the logic for searching the index, and then
+     * calls the search function on that object
+     *
+     * @param indexPath the path to the index
+     * @param runID The name of the run. This will be used to name the output file.
+     * @param runPath the path to the directory where the run file will be written.
+     * @param stopWordsFilePath The path to the stopwords file.
+     * @param filter whether to use the filter or not
+     * @param similarity the similarity function to use.
+     */
     public static void doSearch(@NotNull String indexPath, @NotNull String runID, String runPath, String stopWordsFilePath, boolean filter, @Nullable Similarity similarity) throws IOException, ParseException {
         final String topics = "code/src/main/resource/topics-task2.xml";
 
@@ -320,6 +331,11 @@ public class Searcher {
         s.search(filter);
     }
 
+    /**
+     * It searches for the topics in the index and writes the results to a file
+     *
+     * @param filter boolean value that determines whether to use the filter or not
+     */
     public void search(boolean filter) throws IOException, ParseException {
 
         System.out.printf("%n#### Start searching ####%n");

@@ -12,6 +12,13 @@ public class RRF {
         doSearch(null, null);
     }
 
+    /**
+     * It reads in all the runs, calculates the RRF score for each document, sorts the documents for each topic, and writes
+     * the results to a file
+     *
+     * @param documentDirectoryPath The directory where the documents are stored.
+     * @param runId The name of the run.
+     */
     public static void doSearch(String documentDirectoryPath, String runId) throws IOException {
         List<String> runs = Files.walk(Paths.get(documentDirectoryPath))
                 //use to string here, otherwise checking for path segments
@@ -71,10 +78,20 @@ public class RRF {
         }
     }
 
+    /**
+     * > The function takes in a rank and a k value and returns the reciprocal of the rank plus the k value
+     *
+     * @param k the damping factor
+     * @param rank The rank of the document in the search results.
+     * @return The return value is the reciprocal of the sum of the constant k and the rank.
+     */
     private static double rff(double k, double rank) {
         return 1 / (k + rank);
     }
 
+    /**
+     * It's a simple class that holds a key and a score
+     */
     private static class KeyScorePair {
         private String key;
         private Double score;
@@ -101,6 +118,10 @@ public class RRF {
         }
     }
 
+    /**
+     * This class implements the Comparator interface and overrides the compare method to sort the KeyScorePair objects in
+     * descending order of their score.
+     */
     public static class CustomComparator implements Comparator<KeyScorePair> {
         @Override
         public int compare(KeyScorePair o1, KeyScorePair o2) {

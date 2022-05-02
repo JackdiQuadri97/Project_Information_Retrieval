@@ -61,6 +61,15 @@ public abstract class TopicParser implements Iterator<ParsedTopic>, Iterable<Par
         return next;
     }
 
+    /**
+     * "If there are no more topics to parse, throw an exception. Otherwise, parse the next topic and close the reader if
+     * we've reached the end of the file."
+     *
+     * The `next()` function is called by the `hasNext()` function, which is called by the `forEachRemaining()` function,
+     * which is called by the `forEach()` function
+     *
+     * @return A ParsedTopic object.
+     */
     @Override
     public final ParsedTopic next() {
 

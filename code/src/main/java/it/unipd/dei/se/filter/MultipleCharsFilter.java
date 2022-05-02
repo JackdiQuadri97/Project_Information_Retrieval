@@ -20,6 +20,12 @@ public class MultipleCharsFilter extends TokenFilter {
         this.charTermAttr = addAttribute(CharTermAttribute.class);
     }
 
+    /**
+     * If the current token is not the last token, then check if the current token is a triple character, and if it is,
+     * then remove it
+     *
+     * @return The token is being returned.
+     */
     @Override
     public boolean incrementToken() throws IOException {
         if (!input.incrementToken()) {
