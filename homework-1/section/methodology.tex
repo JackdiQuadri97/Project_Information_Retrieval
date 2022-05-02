@@ -74,8 +74,8 @@ The developed Java system is divided into the following packages, each package r
     	Then an Analyzer is defined to tokenize and filter the tokens before the search.
     	\item Defining how to use topics in the search.
     	
-    	We decided to use just the topics titles in the search by similarity, but we used the topic objects (the items which the user wants to compare) as a filter: we selected among the search results just those that presented both the terms.
-    	Moreover we made it possible to assign weights to the different fields of the documents among which to search, or to select just one of the two fields.
+    	We decided to use just the topics titles in the search by similarity, but we used the topic objects (the items which the user wants to compare) as a filter: we selected among the search results just the documents that presented both the terms.
+    	Moreover we made it possible to assign weights to the different fields of the documents among which to search, or to select just one of the two fields (Contents and DocT5Query).
     	\item Defining which type of comparison to perform between topics and documents.
     	
     	The searcher class accepts as a parameter a similarity function to compare the two.
