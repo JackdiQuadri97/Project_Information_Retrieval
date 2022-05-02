@@ -47,7 +47,7 @@ The developed Java system is divided into the following packages, each package r
             This is a helper class auxiliary class containing utility methods for loading stop lists in the resource folder. These stop lists were obtained from well-known standard lists based off high frequency words. Some of them are: Atire, Indri, Smart, Terrier, Zettair, Glasgow, Snowball, Okapi, and Lucene. 
 \subsubsection{BaselineAnalyzer.java}
             
-            This is a java class for tokenization which starts with a StandardTokenizer ad reducing every word to lower case using a LowerCaseFilter and then we have used the StopFilter to remove frequent words in the collection that do not bring useful information. 
+            This is a java class for tokenization which starts with a StandardTokenizer and reduces every word to lower case using a LowerCaseFilter and then we have used the StopFilter to remove frequent words in the collection that do not bring useful information. 
 \subsubsection{MainAnalyzer.java}
             
             Contains various filters from AnalyzerUtil as well as EnglishPossessiveFilter and MultipleCharsFilter. It also adds synonyms dictionary to perform a query expansion based on Wordnet.
