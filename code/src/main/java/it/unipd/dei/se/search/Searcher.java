@@ -3,6 +3,7 @@
 package it.unipd.dei.se.search;
 
 import com.beust.jcommander.internal.Nullable;
+import it.unipd.dei.se.analyze.MainAnalyzer;
 import it.unipd.dei.se.filter.Filter;
 import it.unipd.dei.se.parse.document.ParsedDocument;
 import it.unipd.dei.se.parse.topic.ParsedTopic;
@@ -313,6 +314,7 @@ public class Searcher {
 
         final int maxDocsRetrieved = 1000;
 
+        final Analyzer ma = new MainAnalyzer();
         final Analyzer analyzer = CustomAnalyzer.builder(Path.of("code/src/main/resource")).withTokenizer(StandardTokenizerFactory.class)
                 .addTokenFilter(LowerCaseFilterFactory.class)
                 .addTokenFilter("stop",

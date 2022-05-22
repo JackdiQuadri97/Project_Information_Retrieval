@@ -1,5 +1,6 @@
 package it.unipd.dei.se;
 
+import it.unipd.dei.se.argument_quality.ArgumentQualityReranker;
 import it.unipd.dei.se.index.DirectoryIndexer;
 import it.unipd.dei.se.rf.RF;
 import it.unipd.dei.se.rrf.RRF;
@@ -42,7 +43,8 @@ public class Run {
                 similarity = new BM25Similarity();
                 break;
         }
-
+        ArgumentQualityReranker argumentQualityReranker = new ArgumentQualityReranker();
+        argumentQualityReranker.toString();
         switch (task) {
             case "index":
                 doIndex(indexDirectoryPath, stopListFilePath, similarity);

@@ -2,6 +2,7 @@
 
 package it.unipd.dei.se.index;
 
+import it.unipd.dei.se.analyze.MainAnalyzer;
 import it.unipd.dei.se.parse.document.DocumentParser;
 import it.unipd.dei.se.parse.document.ParsedDocument;
 import it.unipd.dei.se.parse.document.Parser;
@@ -260,7 +261,7 @@ public class DirectoryIndexer {
         final String extension = "jsonl";
         final int expectedDocs = 1;
         final String charsetName = "ISO-8859-1";
-
+        final Analyzer ma = new MainAnalyzer();
         final Analyzer a = CustomAnalyzer.builder(Path.of("code/src/main/resource")).withTokenizer(StandardTokenizerFactory.class)
                 .addTokenFilter(LowerCaseFilterFactory.class)
                 .addTokenFilter("stop",
