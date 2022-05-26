@@ -1,11 +1,60 @@
 \section{Experimental Setup}
 \label{sec:setup}
 
-Describe the experimental setup, i.e.
-\begin{itemize}
-	\item used collections
-	\item evaluation measures
-	\item url to git repository and its organization
-	\item hardware used for experiments
-	\item ...
-\end{itemize}
+\subsection{Collections}
+
+	Some of the collections used throughout the process of system development were the ones provided by CLEF for the Touché 2022 edition. Those include:
+
+	\begin{itemize}
+		\item topics-task2.xml which contains the topics.
+		\item The original version of passages.jsonl which contains the documents.
+		\item DocT5Query expanded version of passages.jsonl which contains the documents expanded with queries generated using DocT5Query.
+	\end{itemize}
+
+	Other collections are:
+	\begin{itemize}
+		\item Historical stoplists: lucene, smart and terrier;
+		\item Custom stoplists:
+			\begin{itemize}
+				\item Kueristop - Stoplist formed by the 400 most concurrent term in the Contents field of the document collection;
+				\item Kueristopv2 - Subset of kueristop, obtained by removing from it terms appearing in the Objects field of the topics, except for the very general terms also appearing in lucene stoplist ("in" and "the").
+			\end{itemize}
+		\item Sentence quality - file containing, for each document in the document Collection, the pairs of docIds and the score obtained by that document as explained in \ref{subsec:Argument quality}.
+	\end{itemize}
+	
+
+\subsection{Evaluation measures}
+
+	The evaluation measure used is Normalized Discounted Cumulative Gain at depth 5, NDCG@5 in short.
+
+	It is the evaluation measure used by Touché to officially evaluate runs.
+
+	NDCG@k is calculated as follows:
+
+	$$
+	NDCG@k = \frac{DCG@k}{iDCG@k}
+	$$
+	where
+	$$
+	DCG@k = \sum_{i=1}^{k}\frac{relevance_i}{log_2(i+1)}
+	$$
+	and iDCG@k is the ideal DCG@k, meaning the DCG@k for documents ordered by relevance, highest to lowest.
+
+
+\subsection{Git repository}
+
+	The project’s development can be found in the following link to its Git repository:
+	
+	\url{https://bitbucket.org/upd-dei-stud-prj/seupd2122-kueri/src/master/}.
+	
+
+\subsection{Hardware}
+
+	The specifications of the computer used to perform the runs are the following:
+	\begin{description}
+		\item[OS] Windows 10 Home 21H2 x64
+		\item[CPU] AMD Ryzen 5 1600 @ 3.9GHz
+		\item[RAM] 16GB 3000mhz cl16
+		\item[GPU] Nvidia GTX 1060 6GB
+		\item[HDD] 2TB 7200RPM
+	\end{description}
