@@ -1,0 +1,34 @@
+measure = csvread( 'C:\Users\ASUS\IdeaProjects\seupd2122-kueri\matlab\data\ndcgcsv.txt' )
+runs = fileread( 'C:\Users\ASUS\IdeaProjects\seupd2122-kueri\matlab\data\runs.txt' )
+topics = fileread( 'C:\Users\ASUS\IdeaProjects\seupd2122-kueri\matlab\data\topics.txt' )
+
+measure = measure.'
+% Compute the mean performance of each run across topics
+% This is the MAP for each run, if we loaded the AP data
+m = mean(measure);
+
+% sort in descending order of mean score
+[~, idx] = sort(m, 'descend');
+
+% re-order runs by descending mean of the measure
+% needed to have a more nice looking box plot
+measure = measure(:, idx);
+runs = runs(idx);
+
+figure
+
+% show the box plot
+boxchart(measure)
+
+%hold on
+
+% plot the mean on top of the box plot
+%plot (m, ':o', "MarkerSize", 10, "LineWidth", 2)
+
+% adjust tick labels on x-axis, y-axis range, and font size
+ax = gca;
+ax.FontSize = 12;
+ax.XTickLabel = idx;
+
+xlabel("Topics (decreasing order of mean performance)")
+ylabel("Performance")
