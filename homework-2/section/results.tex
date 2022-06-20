@@ -1,4 +1,4 @@
-\section{Results}
+\section{Model Selection}
 \label{sec:results}
 
 The conventional and ideal approach when evaluating the performance of the runs would have been to use last year's test collection. \citep{bondarenko:2021d}
@@ -47,7 +47,7 @@ All the runs are performed on indexes obtained using Standard tokenizer and Lowe
 		18 & 0.5867 & 48 & False & kueristopv2 & True & None & BM25 & [1,1] & True \\
 		19 & 0.5392 & 50 & False & kueristopv2 & False & None & BM25 & [2,1] & True \\
 		\textit{\textbf{20}} & 0.5714 & 50 & False & kueristopv2 & False & Porter & BM25 & [1,1] & True \\
-		\textbf{21} & 0.8606 & 50 & True & kueristopv2 & False & False & BM25 & [1,1] & True \\
+		\textit{\textbf{21}} & 0.8606 & 50 & True & kueristopv2 & False & False & BM25 & [1,1] & True \\
 		22 & 0.8323 & 50 & True & kueristopv2 & False & Porter & BM25 & [1,1] & True \\
 		\bottomrule
 	\end{tabular}
@@ -57,17 +57,17 @@ All the runs are performed on indexes obtained using Standard tokenizer and Lowe
 	\caption{NDCG@5 and setup for rrf runs}
 	\label{tab:results-rrf-table}
 	\centering
-	\begin{tabular}{|c|c|c|}
+	\begin{tabular}{|c|c|c|c|}
 		\toprule
-		\# fused & NDCG@5 & Reranking \\
+		\# & \# fused & NDCG@5 & Reranking \\
 		\midrule
-		\textit{\textbf{10,14,15,16,17}} & 0.7521 & False \\
-		\textit{\textbf{10,14,15,16,17}} & 0.7450 & True \\
+		\textit{\textbf{23}} & 10,14,15,16,17 & 0.7521 & False \\
+		\textit{\textbf{24}} & 10,14,15,16,17 & 0.7450 & True \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
-\subsection{Retrieval Model}
+\subsection{Retrieval Similarity Model}
 The runs 1 to 3 compare BM25 (utilizing lucene's default parameters), Dirichlet and TFIDF Similarity as scoring functions, using lucene stoplist.
 The run using BM25 was the best performer, so we decided to use this Similarity for all the other experiments.
 
